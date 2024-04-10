@@ -1,5 +1,3 @@
-import java.text.SimpleDateFormat
-
 buildscript {
     repositories {
         mavenCentral()
@@ -21,7 +19,6 @@ plugins {
     id 'java'
     id 'application'
 
-    id 'org.cadixdev.licenser' version '0.6.1'
     id 'com.adarshr.test-logger' version '3.2.0'
     id 'edu.sc.seis.macAppBundle' version '2.3.0'
     id 'edu.sc.seis.launch4j' version '3.0.3'
@@ -162,18 +159,7 @@ gettext {
     }
 }
 
-license {
-    header = project.file('LICENSEHEADER')
-    include '**/*.java'
-    exclude 'io/github/**/*.java'
-    exclude 'net/minecraft/**/*.java'
-    exclude 'com/atlauncher/graphql/**/*.java'
-    exclude 'com/atlauncher/gui/layouts/WrapLayout.java'
-    newLine = false
-    properties {
-        year = currentYear()
-    }
-}
+
 
 shadowJar {
     archiveClassifier.set(null)
@@ -221,11 +207,6 @@ copyToResourcesJava {
     rename("ATLauncher-${project.version}.jar", "ATLauncher.jar")
 }
 
-def currentYear() {
-    def df = new SimpleDateFormat("yyyy")
-    df.setTimeZone(TimeZone.getTimeZone("UTC"))
-    return df.format(new Date())
-}
 
 launch4j {
     outfile = "ATLauncher-${project.version}.exe"
@@ -234,7 +215,6 @@ launch4j {
     icon = "${projectDir}/src/main/resources/assets/image/icon.ico"
     version = "${project.version}"
     textVersion = "${project.version}"
-    copyright = "2013-${currentYear()} ${project.name}"
     companyName = "${project.name}"
     bundledJrePath = "jre/;%JAVA_HOME%;%PATH%"
     jvmOptions = [
@@ -297,13 +277,6 @@ clean.doFirst {
     delete "${projectDir}/dist"
 }
 
-project.afterEvaluate {
-    tasks.check {
-        dependsOn -= tasks.find {
-            it.name.equals("checkLicenses")
-        }
-    }
-}
 
 def shouldIgnoreUpdate = { String version -> return ['ALPHA', 'BETA', 'RC', '-M'].any { it -> version.toUpperCase().contains(it) }}
 tasks.named("dependencyUpdates").configure {
