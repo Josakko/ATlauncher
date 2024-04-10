@@ -17,6 +17,10 @@
  */
 package com.atlauncher.utils;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+
+import com.mojang.authlib.properties.PropertyMap;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
@@ -32,29 +36,46 @@ import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 
 public class Authentication {
     public static LoginResponse checkAccount(String username, String password, String clientToken) {
-        YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(
-                App.settings.proxy, clientToken).createUserAuthentication(Agent.MINECRAFT);
+        // YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(App.settings.proxy, clientToken).createUserAuthentication(Agent.MINECRAFT);
 
         LoginResponse response = new LoginResponse(username);
+        response.setOffline();
 
-        auth.setUsername(username);
-        auth.setPassword(password);
 
-        if (auth.canLogIn()) {
-            try {
-                auth.logIn();
-                response.setAuth(auth);
-            } catch (AuthenticationException e) {
-                if (e.getMessage().contains("410")) {
-                    response.setErrorMessage(GetText.tr(
-                            "Account has been migrated to a Microsoft account. Please use the 'Login with Microsoft' button instead."));
-                } else {
-                    response.setErrorMessage(e.getMessage());
-                }
+        Agent agent = new Agent(username, 1);
+        Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(228));
 
-                LogManager.error("Authentication failed");
+        response.auth = new YggdrasilUserAuthentication(new YggdrasilAuthenticationService(proxy, null), agent) {
+            @Override
+            protected String getUsername() {
+                return username;
             }
-        }
+
+            @Override
+            public PropertyMap getUserProperties() {
+                return new PropertyMap();
+            }
+        };
+
+
+//        auth.setUsername(username);
+//        auth.setPassword(password);
+//
+//        if (auth.canLogIn()) {
+//            try {
+//                auth.logIn();
+//                response.setAuth(auth);
+//            } catch (AuthenticationException e) {
+//                if (e.getMessage().contains("410")) {
+//                    response.setErrorMessage(GetText.tr(
+//                            "Account has been migrated to a Microsoft account. Please use the 'Login with Microsoft' button instead."));
+//                } else {
+//                    response.setErrorMessage(e.getMessage());
+//                }
+//
+//                LogManager.error("Authentication failed");
+//            }
+//        }
 
         return response;
     }

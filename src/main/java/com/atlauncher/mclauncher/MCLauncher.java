@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Objects;
 
 import com.atlauncher.App;
 import com.atlauncher.FileSystem;
@@ -91,6 +92,7 @@ public class MCLauncher {
 
         logInstanceInformation(instance);
 
+        // LogManager.info("Launching Minecraft with the following arguments: " + arguments);
         LogManager.info("Launching Minecraft with the following arguments (user related stuff has been removed): "
                 + censorArguments(arguments, account, props, username));
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
@@ -425,7 +427,7 @@ public class MCLauncher {
         argument = argument.replace("${assets_root}", FileSystem.ASSETS.toAbsolutePath().toString());
         argument = argument.replace("${assets_index_name}", instance.getAssets());
         argument = argument.replace("${auth_uuid}", UUIDTypeAdapter.fromUUID(account.getRealUUID()));
-        argument = argument.replace("${auth_access_token}", account.getAccessToken());
+        argument = argument.replace("${auth_access_token}", Objects.toString(account.getAccessToken()));
         argument = argument.replace("${version_type}", instance.type.getValue());
         argument = argument.replace("${launcher_name}", Constants.LAUNCHER_NAME);
         argument = argument.replace("${launcher_version}", Constants.VERSION.toStringForLogging());
@@ -455,8 +457,8 @@ public class MCLauncher {
         if (props != null) {
             argsString = argsString.replace(props, "REDACTED");
         }
-        argsString = argsString.replace(account.getAccessToken(), "REDACTED");
-        argsString = argsString.replace(account.getSessionToken(), "REDACTED");
+        argsString = argsString.replace(Objects.toString(account.getAccessToken()), "REDACTED");
+        argsString = argsString.replace(Objects.toString(account.getSessionToken()), "REDACTED");
 
         return argsString;
     }

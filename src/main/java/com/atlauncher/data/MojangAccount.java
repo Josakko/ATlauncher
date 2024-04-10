@@ -17,17 +17,12 @@
  */
 package com.atlauncher.data;
 
-import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
 
 import org.mini2Dx.gettext.GetText;
 
@@ -223,32 +218,32 @@ public class MojangAccount extends AbstractAccount {
         if (response == null || (response.hasError() && !response.isOffline())) {
             LogManager.error("Access token is NOT valid! Will attempt to get another one!");
 
-            if (!this.remember) {
-                JPanel panel = new JPanel();
-                panel.setLayout(new BorderLayout());
-                // #. {0} is the Minecraft username
-                JLabel passwordLabel = new JLabel(GetText.tr("Enter password for {0}", this.minecraftUsername));
-
-                JPasswordField passwordField = new JPasswordField();
-                panel.add(passwordLabel, BorderLayout.NORTH);
-                panel.add(passwordField, BorderLayout.CENTER);
-
-                int ret = DialogManager.confirmDialog().setTitle(GetText.tr("Enter Password")).setContent(panel).show();
-
-                if (ret == DialogManager.OK_OPTION) {
-                    if (passwordField.getPassword().length == 0) {
-                        LogManager.error("Aborting login for " + this.minecraftUsername + ", no password entered");
-                        App.launcher.setMinecraftLaunched(false);
-                        return null;
-                    }
-
-                    this.setPassword(new String(passwordField.getPassword()));
-                } else {
-                    LogManager.error("Aborting login for " + this.minecraftUsername);
-                    App.launcher.setMinecraftLaunched(false);
-                    return null;
-                }
-            }
+//            if (!this.remember) {
+//                JPanel panel = new JPanel();
+//                panel.setLayout(new BorderLayout());
+//                // #. {0} is the Minecraft username
+//                JLabel passwordLabel = new JLabel(GetText.tr("Enter password for {0}", this.minecraftUsername));
+//
+//                JPasswordField passwordField = new JPasswordField();
+//                panel.add(passwordLabel, BorderLayout.NORTH);
+//                panel.add(passwordField, BorderLayout.CENTER);
+//
+//                int ret = DialogManager.confirmDialog().setTitle(GetText.tr("Enter Password")).setContent(panel).show();
+//
+//                if (ret == DialogManager.OK_OPTION) {
+//                    if (passwordField.getPassword().length == 0) {
+//                        LogManager.error("Aborting login for " + this.minecraftUsername + ", no password entered");
+//                        App.launcher.setMinecraftLaunched(false);
+//                        return null;
+//                    }
+//
+//                    this.setPassword(new String(passwordField.getPassword()));
+//                } else {
+//                    LogManager.error("Aborting login for " + this.minecraftUsername);
+//                    App.launcher.setMinecraftLaunched(false);
+//                    return null;
+//                }
+//            }
 
             response = Authentication.login(MojangAccount.this, true);
         }
@@ -268,7 +263,7 @@ public class MojangAccount extends AbstractAccount {
         }
 
         if (!response.isOffline() && !response.getAuth().canPlayOnline()) {
-            return null;
+            return response;
         }
 
         if (!response.isOffline()) {

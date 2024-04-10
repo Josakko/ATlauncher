@@ -20,6 +20,7 @@ package com.atlauncher.utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import com.atlauncher.Gsons;
 import com.atlauncher.Network;
@@ -56,6 +57,7 @@ public class MojangAPIUtils {
     }
 
     public static boolean uploadSkin(AbstractAccount account, File skinPath, String skinType) {
+        @SuppressWarnings("deprecation")
         RequestBody requestBody = RequestBody.create(MediaType.parse("image/png"), skinPath);
 
         MultipartBody body = new MultipartBody.Builder()
@@ -66,7 +68,7 @@ public class MojangAPIUtils {
 
         try {
             Download.build().setUrl("https://api.minecraftservices.com/minecraft/profile/skins")
-                    .header("Authorization", "Bearer " + account.getAccessToken())
+                    .header("Authorization", "Bearer " + Objects.toString(account.getAccessToken()))
                     .header("Content-Type", "multipart/form-data").post(body)
                     .asClassWithThrow(JsonObject.class);
 

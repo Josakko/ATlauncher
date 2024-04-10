@@ -24,7 +24,7 @@ public class LoginResponse {
     private boolean offline;
     private boolean hasError;
     private String errorMessage;
-    private UserAuthentication auth;
+    public UserAuthentication auth;
     private final String username;
 
     public LoginResponse(String username) {
