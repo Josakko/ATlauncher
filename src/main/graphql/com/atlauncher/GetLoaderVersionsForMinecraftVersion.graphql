@@ -1,0 +1,31 @@
+query GetLoaderVersionsForMinecraftVersion($minecraftVersion: String!) {
+    loaderVersions(minecraftVersion: $minecraftVersion) {
+        fabric {
+            version
+        }
+        forge {
+            version
+            rawVersion
+            recommended
+            installerSha1Hash
+            installerSize
+            universalSha1Hash
+            universalSize
+            clientSha1Hash
+            clientSize
+            serverSha1Hash
+            serverSize
+        }
+        legacyfabric {
+            version
+        }
+        neoforge {
+            version
+            rawVersion
+            recommended
+        }
+        quilt {
+            version
+        }
+    }
+}
