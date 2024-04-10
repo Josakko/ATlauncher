@@ -70,14 +70,12 @@ import com.atlauncher.gui.LauncherFrame;
 import com.atlauncher.gui.SplashScreen;
 import com.atlauncher.gui.TrayMenu;
 import com.atlauncher.gui.dialogs.ProgressDialog;
-import com.atlauncher.gui.dialogs.SetupDialog;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.network.Download;
-import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.themes.ATLauncherLaf;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
@@ -146,7 +144,7 @@ public class App {
      * <p/>
      * --skip-setup-dialog
      */
-    public static boolean skipSetupDialog = false;
+    // public static boolean skipSetupDialog = true;
 
     /**
      * This allows skipping the system tray integration so that the launcher doesn't
@@ -164,7 +162,7 @@ public class App {
      * <p/>
      * --disable-analytics
      */
-    public static boolean disableAnalytics = false;
+    // public static boolean disableAnalytics = true;
 
     /**
      * This allows skipping the in built error reporting. This is mainly useful for
@@ -172,7 +170,7 @@ public class App {
      * <p/>
      * --disable-error-reporting
      */
-    public static boolean disableErrorReporting = false;
+    public static boolean disableErrorReporting = true;
 
     /**
      * This is passed in by launch scripts on Linux to help the launcher know which
@@ -204,7 +202,7 @@ public class App {
      * <p/>
      * --no-launcher-update
      */
-    public static boolean noLauncherUpdate = false;
+    // public static boolean noLauncherUpdate = true;
 
     /**
      * This will tell the launcher to not show the console. You can open the console
@@ -287,9 +285,9 @@ public class App {
         }
 
         // Initialize the error reporting unless disabled by command line
-        if (!disableErrorReporting) {
-            ErrorReporting.enable();
-        }
+        // if (!disableErrorReporting) {
+        //     ErrorReporting.enable();
+        // }
 
         // check the launcher has been 'installed' correctly
         checkInstalledCorrectly();
@@ -363,15 +361,21 @@ public class App {
         launcher.loadEverything(); // Loads everything that needs to be loaded
         LogManager.info("Launcher finished loading everything");
 
+
         if (settings.firstTimeRun) {
-            if (skipSetupDialog) {
-                App.settings.firstTimeRun = false;
-                App.settings.save();
-            } else {
-                LogManager.warn("Launcher not setup. Loading Setup Dialog");
-                new SetupDialog();
-            }
+            App.settings.firstTimeRun = false;
+            App.settings.save();
         }
+
+//        if (settings.firstTimeRun) {
+//            if (skipSetupDialog) {
+//                App.settings.firstTimeRun = false;
+//                App.settings.save();
+//            } else {
+//                LogManager.warn("Launcher not setup. Loading Setup Dialog");
+//                new SetupDialog();
+//            }
+//        }
 
         checkIfNeedToUpdateBundledJre();
 
@@ -965,12 +969,15 @@ public class App {
         parser.accepts("updated", "If the launcher was just updated.").withOptionalArg().ofType(Boolean.class);
         parser.accepts("updatedBundledJre", "If the launcher just updated it's bundled JRE.").withOptionalArg()
                 .ofType(Boolean.class);
+        // disabled 
         parser.accepts("skip-setup-dialog",
                 "If the first time setup dialog should be skipped, using the defaults. Note that this will enable analytics by default.")
                 .withOptionalArg().ofType(Boolean.class);
         parser.accepts("skip-tray-integration", "If the tray icon should not be enabled.").withOptionalArg()
                 .ofType(Boolean.class);
+        // disabled 
         parser.accepts("disable-analytics", "If analytics should be disabled.").withOptionalArg().ofType(Boolean.class);
+        // disabled 
         parser.accepts("disable-error-reporting", "If error reporting should be disabled.").withOptionalArg()
                 .ofType(Boolean.class);
         parser.accepts("install-method", "The method used to install the launcher.").withRequiredArg()
@@ -984,6 +991,7 @@ public class App {
         parser.accepts("allow-all-ssl-certs",
                 "This will tell the launcher to allow all SSL certs regardless of validity. This is insecure and only intended for development purposes.")
                 .withOptionalArg().ofType(Boolean.class);
+        // disabled 
         parser.accepts("no-launcher-update",
                 "This forces the launcher to not check for a launcher update. It can be enabled with the below command line argument.")
                 .withOptionalArg().ofType(Boolean.class);
@@ -1036,24 +1044,9 @@ public class App {
             LogManager.debug("Debug level has been set to " + options.valueOf("debug-level") + "!");
         }
 
-        skipSetupDialog = options.has("skip-setup-dialog");
-        if (skipSetupDialog) {
-            LogManager.debug("Skipping setup dialog!");
-        }
-
         skipTrayIntegration = options.has("skip-tray-integration");
         if (skipTrayIntegration) {
             LogManager.debug("Skipping tray integration!");
-        }
-
-        disableAnalytics = options.has("disable-analytics");
-        if (disableAnalytics) {
-            LogManager.debug("Disabling analytics!");
-        }
-
-        disableErrorReporting = options.has("disable-error-reporting");
-        if (disableErrorReporting) {
-            LogManager.debug("Disabling error reporting!");
         }
 
         if (options.has("install-method")) {
@@ -1091,10 +1084,10 @@ public class App {
             LogManager.warn("Allowing all ssl certs. This is insecure and should only be used for development.");
         }
 
-        noLauncherUpdate = options.has("no-launcher-update");
-        if (noLauncherUpdate) {
-            LogManager.debug("Not updating the launcher!");
-        }
+        // noLauncherUpdate = options.has("no-launcher-update");
+        // if (noLauncherUpdate) {
+        //     LogManager.debug("Not updating the launcher!");
+        // }
 
         noConsole = options.has("no-console");
         if (noConsole) {
