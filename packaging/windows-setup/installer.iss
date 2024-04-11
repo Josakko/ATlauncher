@@ -1,5 +1,5 @@
 #define MyAppName "ATLauncher"
-#define MyAppURL "https://atlauncher.com"
+#define MyAppURL "https://github.com/Josakko/ATlauncher"
 #define MyAppVersion "1.2.0.0"
 
 [Setup]
