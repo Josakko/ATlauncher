@@ -28,7 +28,7 @@ public class LoginResponse {
     private final String username;
 
     public LoginResponse(String username) {
-        this.offline = false;
+        this.offline = false; // change maybe ?? 
         this.hasError = false;
         this.auth = null;
         this.username = username;
@@ -36,6 +36,10 @@ public class LoginResponse {
 
     public void setOffline() {
         this.offline = true;
+    }
+
+    public void setOnline() {
+        this.offline = false;
     }
 
     public boolean isOffline() {

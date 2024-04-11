@@ -246,7 +246,11 @@ public class MojangAccount extends AbstractAccount {
 //            }
 
             response = Authentication.login(MojangAccount.this, true);
+            response.setOffline();
+            return response;
         }
+
+        // response = Authentication.login(MojangAccount.this, true);
 
         if (response.hasError() && !response.isOffline()) {
             LogManager.error(response.getErrorMessage());

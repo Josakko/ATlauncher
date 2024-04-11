@@ -986,8 +986,7 @@ public class Instance extends MinecraftVersion {
                         session = loginDialog.getReturnValue();
 
                         if (session == null) {
-                            Analytics.trackEvent(
-                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "mojang_no_session"));
+                            // Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchFailed(this, offline, "mojang_no_session"));
                             App.launcher.setMinecraftLaunched(false);
                             if (App.launcher.getParent() != null) {
                                 App.launcher.getParent().setVisible(true);
