@@ -148,10 +148,8 @@ import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.managers.TechnicModpackUpdateManager;
 import com.atlauncher.mclauncher.MCLauncher;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.GraphqlClient;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CommandExecutor;
@@ -935,7 +933,6 @@ public class Instance extends MinecraftVersion {
         prepareDialog.start();
 
         if (prepareDialog.getReturnValue() == null || !prepareDialog.getReturnValue()) {
-            Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchFailed(this, offline, "prepare_failure"));
             LogManager.error(
                     "Failed to prepare instance " + this.launcher.name + " for launch. Check the logs and try again.");
             return false;
@@ -986,7 +983,6 @@ public class Instance extends MinecraftVersion {
                         session = loginDialog.getReturnValue();
 
                         if (session == null) {
-                            // Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchFailed(this, offline, "mojang_no_session"));
                             App.launcher.setMinecraftLaunched(false);
                             if (App.launcher.getParent() != null) {
                                 App.launcher.getParent().setVisible(true);
@@ -999,8 +995,6 @@ public class Instance extends MinecraftVersion {
                         if (!executeCommand(preLaunchCommand)) {
                             LogManager.error("Failed to execute pre-launch command");
 
-                            Analytics.trackEvent(
-                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "pre_launch_failure"));
                             App.launcher.setMinecraftLaunched(false);
 
                             if (App.launcher.getParent() != null) {
@@ -1029,8 +1023,7 @@ public class Instance extends MinecraftVersion {
 
                         if (!(Boolean) loginDialog.getReturnValue()) {
                             LogManager.error("Failed to login");
-                            Analytics.trackEvent(
-                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "microsoft_login_failure"));
+
                             App.launcher.setMinecraftLaunched(false);
                             if (App.launcher.getParent() != null) {
                                 App.launcher.getParent().setVisible(true);
@@ -1046,8 +1039,6 @@ public class Instance extends MinecraftVersion {
                         if (!executeCommand(preLaunchCommand)) {
                             LogManager.error("Failed to execute pre-launch command");
 
-                            Analytics.trackEvent(
-                                    AnalyticsEvent.forInstanceLaunchFailed(this, offline, "pre_launch_failure"));
                             App.launcher.setMinecraftLaunched(false);
 
                             if (App.launcher.getParent() != null) {
@@ -1064,7 +1055,6 @@ public class Instance extends MinecraftVersion {
                 }
 
                 if (process == null) {
-                    Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchFailed(this, offline, "no_process"));
                     LogManager.error("Failed to get process for Minecraft");
                     App.launcher.setMinecraftLaunched(false);
                     if (App.launcher.getParent() != null) {
@@ -1072,8 +1062,6 @@ public class Instance extends MinecraftVersion {
                     }
                     return;
                 }
-
-                Analytics.trackEvent(AnalyticsEvent.forInstanceLaunched(this, offline));
 
                 if (this.getPack() != null && this.getPack().isLoggingEnabled() && !this.launcher.isDev
                         && App.settings.enableLogs) {
@@ -1084,7 +1072,6 @@ public class Instance extends MinecraftVersion {
 
                 if ((App.autoLaunch != null && App.closeLauncher)
                         || (!App.settings.keepLauncherOpen && !App.settings.enableLogs)) {
-                    Analytics.endSession();
                     System.exit(0);
                 }
 
@@ -1245,7 +1232,6 @@ public class Instance extends MinecraftVersion {
 
                 App.launcher.setMinecraftLaunched(false);
                 final int timePlayed = (int) (end - start) / 1000;
-                Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchCompleted(this, offline, timePlayed));
                 if (this.getPack() != null && this.getPack().isLoggingEnabled() && !this.launcher.isDev
                         && App.settings.enableLogs) {
                     if (timePlayed > 0) {
@@ -1270,12 +1256,10 @@ public class Instance extends MinecraftVersion {
                     FileUtils.delete(getCustomMinecraftJarLibraryPath());
                 }
                 if (!App.settings.keepLauncherOpen) {
-                    Analytics.endSession();
                     System.exit(0);
                 }
             } catch (Exception e1) {
                 LogManager.logStackTrace(e1);
-                Analytics.trackEvent(AnalyticsEvent.forInstanceLaunchFailed(this, offline, "exception"));
                 App.launcher.setMinecraftLaunched(false);
                 if (App.launcher.getParent() != null) {
                     App.launcher.getParent().setVisible(true);
@@ -2757,7 +2741,6 @@ public class Instance extends MinecraftVersion {
         dialog.add(topPanel, BorderLayout.CENTER);
         dialog.add(bottomPanel, BorderLayout.SOUTH);
 
-        Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_backup", this));
 
         final Thread backupThread = new Thread(() -> {
             Timestamp timestamp = new Timestamp(new Date().getTime());
@@ -2785,12 +2768,10 @@ public class Instance extends MinecraftVersion {
     }
 
     public void startReinstall() {
-        Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_reinstall", this));
         new InstanceInstallerDialog(this);
     }
 
     public void startRename() {
-        Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_rename", this));
         new RenameInstanceDialog(this);
     }
 
@@ -2805,7 +2786,6 @@ public class Instance extends MinecraftVersion {
                         .getInstanceBySafeName(clonedName.replaceAll("[^A-Za-z0-9]", "")) == null
                 && clonedName.replaceAll("[^A-Za-z0-9]", "").length() >= 1 && !Files.exists(
                         FileSystem.INSTANCES.resolve(clonedName.replaceAll("[^A-Za-z0-9]", "")))) {
-            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_clone", this));
 
             final String newName = clonedName;
             final ProgressDialog dialog = new ProgressDialog(GetText.tr("Cloning Instance"), 0,
@@ -2862,7 +2842,6 @@ public class Instance extends MinecraftVersion {
                 GetText.tr("Changing Description"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
         if (ret == 0) {
-            Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_description_change", this));
             launcher.description = textArea.getText();
             save();
         }
@@ -2877,7 +2856,6 @@ public class Instance extends MinecraftVersion {
         if (ret == JFileChooser.APPROVE_OPTION) {
             File img = chooser.getSelectedFile();
             if (img.getAbsolutePath().endsWith(".png")) {
-                Analytics.trackEvent(AnalyticsEvent.forInstanceEvent("instance_image_change", this));
                 try {
                     Utils.safeCopy(img, getRoot().resolve("instance.png").toFile());
                     save();
@@ -2889,9 +2867,6 @@ public class Instance extends MinecraftVersion {
     }
 
     public void changeLoaderVersion() {
-        Analytics.trackEvent(
-                AnalyticsEvent.forInstanceLoaderEvent("instance_change_loader_version", this, launcher.loaderVersion));
-
         LoaderVersion loaderVersion = showLoaderVersionSelector(launcher.loaderVersion.getLoaderType());
 
         if (loaderVersion == null) {
@@ -2938,9 +2913,6 @@ public class Instance extends MinecraftVersion {
     }
 
     public void addLoader(LoaderType loaderType) {
-        Analytics
-                .trackEvent(AnalyticsEvent.forInstanceAddLoader(this, loaderType));
-
         LoaderVersion loaderVersion = showLoaderVersionSelector(loaderType);
 
         if (loaderVersion == null) {
@@ -3092,8 +3064,6 @@ public class Instance extends MinecraftVersion {
     }
 
     public void removeLoader() {
-        Analytics.trackEvent(
-                AnalyticsEvent.forInstanceLoaderEvent("instance_remove_loader", this, launcher.loaderVersion));
         String loaderType = launcher.loaderVersion.type;
 
         boolean success = false;

@@ -36,8 +36,6 @@ import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.card.NilCard;
 import com.atlauncher.gui.card.ServerCard;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.viewmodel.base.IServersTabViewModel;
 import com.atlauncher.viewmodel.impl.ServersTabViewModel;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
@@ -74,7 +72,6 @@ public class ServersTab extends JPanel implements Tab, RelocalizationListener {
             public void keyReleased(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     String text = searchBox.getText();
-                    Analytics.trackEvent(AnalyticsEvent.forSearchEvent("servers", text));
                     viewModel.setSearchSubject(text);
                 }
             }

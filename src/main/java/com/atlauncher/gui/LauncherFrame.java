@@ -56,7 +56,6 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.Utils;
 
 @SuppressWarnings("serial")
@@ -218,7 +217,6 @@ public final class LauncherFrame extends JFrame implements RelocalizationListene
         TabChangeManager.post(tabbedPane.getSelectedIndex());
 
         tabbedPane.addChangeListener(e -> {
-            Analytics.sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName());
             TabChangeManager.post(tabbedPane.getSelectedIndex());
         });
     }

@@ -50,8 +50,6 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.dbus.DBusUtils;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ImportPackUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -74,7 +72,6 @@ public class ImportInstanceDialog extends JDialog {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setResizable(false);
 
-        Analytics.sendScreenView("Import Instance Dialog");
 
         // Middle Panel Stuff
         JPanel middle = new JPanel();
@@ -219,11 +216,8 @@ public class ImportInstanceDialog extends JDialog {
 
             dialog.addThread(new Thread(() -> {
                 if (!url.getText().isEmpty()) {
-                    Analytics.trackEvent(AnalyticsEvent.forImportInstance("Url", url.getText()));
                     dialog.setReturnValue(ImportPackUtils.loadFromUrl(url.getText()));
                 } else if (!filePath.getText().isEmpty()) {
-                    Analytics.trackEvent(
-                            AnalyticsEvent.forImportInstance("Archive", new File(filePath.getText()).getName()));
                     dialog.setReturnValue(ImportPackUtils.loadFromFile(new File(filePath.getText())));
                 } else {
                     dialog.setReturnValue(false);

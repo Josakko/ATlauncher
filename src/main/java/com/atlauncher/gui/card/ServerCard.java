@@ -45,8 +45,6 @@ import com.atlauncher.gui.components.ImagePanel;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.ServerManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
@@ -153,7 +151,6 @@ public class ServerCard extends CollapsiblePanel implements RelocalizationListen
                     .show();
 
             if (ret == DialogManager.YES_OPTION) {
-                Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_delete", server));
                 final ProgressDialog dialog = new ProgressDialog(GetText.tr("Deleting Server"), 0,
                         GetText.tr("Deleting Server. Please wait..."), null, App.launcher.getParent());
                 dialog.addThread(new Thread(() -> {

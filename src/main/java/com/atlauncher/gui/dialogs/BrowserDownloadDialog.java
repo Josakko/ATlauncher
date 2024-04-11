@@ -51,7 +51,6 @@ import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.json.Mod;
 import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
 import com.atlauncher.utils.OS;
@@ -92,8 +91,6 @@ public final class BrowserDownloadDialog extends JDialog {
         if (success) {
             return;
         }
-
-        Analytics.sendScreenView("Browser Download Mods");
 
         setupComponents();
 

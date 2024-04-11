@@ -34,8 +34,6 @@ import com.atlauncher.data.MojangAccount;
 import com.atlauncher.gui.dialogs.ChangeSkinDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.viewmodel.base.IAccountsViewModel;
 
@@ -198,7 +196,6 @@ public class AccountsViewModel implements IAccountsViewModel {
             AccountManager.saveAccounts();
         }
 
-        Analytics.trackEvent(AnalyticsEvent.simpleEvent("account_edit"));
         LogManager.info("Edited Account " + account);
         pushNewAccounts();
     }
@@ -235,8 +232,6 @@ public class AccountsViewModel implements IAccountsViewModel {
 
     @Override
     public boolean refreshAccessToken() {
-        Analytics.trackEvent(AnalyticsEvent.simpleEvent("account_refresh_access_token"));
-
         AbstractAccount abstractAccount = getSelectedAccount();
         if (abstractAccount instanceof MicrosoftAccount) {
             MicrosoftAccount account = (MicrosoftAccount) abstractAccount;
@@ -257,7 +252,6 @@ public class AccountsViewModel implements IAccountsViewModel {
     @Override
     public void updateUsername() {
         AbstractAccount account = getSelectedAccount();
-        Analytics.trackEvent(AnalyticsEvent.simpleEvent("account_update_username"));
         account.updateUsername();
         AccountManager.saveAccounts();
         pushNewAccounts();
@@ -273,13 +267,11 @@ public class AccountsViewModel implements IAccountsViewModel {
     @Override
     public void updateSkin() {
         AbstractAccount account = getSelectedAccount();
-        Analytics.trackEvent(AnalyticsEvent.simpleEvent("account_update_skin"));
         account.updateSkin();
     }
 
     @Override
     public void deleteAccount() {
-        Analytics.trackEvent(AnalyticsEvent.simpleEvent("account_delete"));
         AccountManager.removeAccount(getSelectedAccount());
         pushNewAccounts();
     }

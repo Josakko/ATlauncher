@@ -38,8 +38,6 @@ import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.thread.PasteUpload;
 
 @SuppressWarnings("serial")
@@ -85,12 +83,10 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
      */
     private void addActionListeners() {
         clearButton.addActionListener(e -> {
-            Analytics.trackEvent(AnalyticsEvent.simpleEvent("console_clear"));
             App.console.clearConsole();
             LogManager.info("Console Cleared");
         });
         copyLogButton.addActionListener(e -> {
-            Analytics.trackEvent(AnalyticsEvent.simpleEvent("console_copy"));
             App.TOASTER.pop("Copied Log to clipboard");
             LogManager.info("Copied Log to clipboard");
             StringSelection text = new StringSelection(App.console.getLog());
@@ -120,7 +116,6 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
             result = dialog.getReturnValue();
 
             if (result != null && result.contains(Constants.PASTE_CHECK_URL)) {
-                Analytics.trackEvent(AnalyticsEvent.simpleEvent("console_upload"));
                 App.TOASTER.pop("Log uploaded and link copied to clipboard");
                 LogManager.info("Log uploaded and link copied to clipboard: " + result);
                 StringSelection text = new StringSelection(result);
@@ -138,7 +133,6 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
                             .build())
                     .setType(DialogManager.QUESTION).show();
             if (ret == DialogManager.YES_OPTION) {
-                Analytics.trackEvent(AnalyticsEvent.simpleEvent("console_kill_minecraft"));
                 App.launcher.killMinecraft();
                 killMinecraftButton.setVisible(false);
             }

@@ -45,8 +45,6 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.CurseForgeApi;
 
 public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
@@ -268,7 +266,6 @@ public class CurseForgePacksPanel extends PackBrowserPlatformPanel {
                 App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
             }
         } else {
-            Analytics.trackEvent(AnalyticsEvent.forPackInstall(project));
             new InstanceInstallerDialog(project);
         }
     }

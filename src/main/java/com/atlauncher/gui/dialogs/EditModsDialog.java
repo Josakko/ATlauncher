@@ -60,7 +60,6 @@ import com.atlauncher.gui.layouts.WrapLayout;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
 import com.atlauncher.utils.Hashing;
@@ -110,8 +109,6 @@ public class EditModsDialog extends JDialog {
     }
 
     private void setupComponents() {
-        Analytics.sendScreenView("Edit Mods Dialog");
-
         JSplitPane split = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
         split.setDividerSize(0);
         split.setBorder(null);

@@ -44,8 +44,6 @@ import com.atlauncher.gui.dialogs.ViewModsDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
@@ -150,7 +148,6 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {
-                Analytics.trackEvent(AnalyticsEvent.forPackInstall(pack));
                 new InstanceInstallerDialog(pack);
             }
         });
@@ -178,7 +175,6 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {
-                Analytics.trackEvent(AnalyticsEvent.forPackInstall(pack, true));
                 new InstanceInstallerDialog(pack, true);
             }
         });
@@ -194,7 +190,6 @@ public class ATLauncherPackCard extends JPanel implements RelocalizationListener
                         Constants.SERVERS_LIST_PACK, pack.getSafeName())));
 
         this.modsButton.addActionListener(e -> {
-            Analytics.trackEvent(AnalyticsEvent.forPackEvent("pack_view_mods", pack.getName(), "ATLauncher"));
             new ViewModsDialog(pack).setVisible(true);
         });
     }

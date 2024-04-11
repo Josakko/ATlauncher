@@ -32,9 +32,7 @@ import com.atlauncher.evnt.listener.SettingsListener;
 import com.atlauncher.evnt.manager.SettingsManager;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.network.Download;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
 
@@ -74,15 +72,11 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener {
 
     @Override
     public void launchInDebug() {
-        Analytics.trackEvent(AnalyticsEvent.forToolRun("debug_mode"));
-
         OS.relaunchInDebugMode();
     }
 
     @Override
     public void clearDownloads() {
-        Analytics.trackEvent(AnalyticsEvent.forToolRun("download_clearer"));
-
         for (File file : FileSystem.DOWNLOADS.toFile().listFiles()) {
             if (!file.equals(FileSystem.TECHNIC_DOWNLOADS.toFile())) {
                 Utils.delete(file);
@@ -100,8 +94,6 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener {
 
     @Override
     public void deleteLibraries() {
-        Analytics.trackEvent(AnalyticsEvent.forToolRun("libraries_deleter"));
-
         for (File file : FileSystem.LIBRARIES.toFile().listFiles()) {
             Utils.delete(file);
         }
@@ -109,8 +101,6 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener {
 
     @Override
     public void clearLogs() {
-        Analytics.trackEvent(AnalyticsEvent.forToolRun("log_clearer"));
-
         if (Files.exists(FileSystem.LOGS.resolve("old"))) {
             for (File file : FileSystem.LOGS.resolve("old").toFile().listFiles()) {
                 Utils.delete(file);
@@ -142,7 +132,6 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener {
 
     @Override
     public void runNetworkChecker(Consumer<Void> onTaskComplete, Consumer<Void> onFail, Consumer<Void> onSuccess) {
-        Analytics.trackEvent(AnalyticsEvent.forToolRun("network_checker"));
         StringBuilder results = new StringBuilder();
 
         // Connection to CDN
@@ -328,8 +317,6 @@ public class ToolsViewModel implements IToolsViewModel, SettingsListener {
 
     @Override
     public void updateSkins(Consumer<Void> onTaskComplete) {
-        Analytics.trackEvent(AnalyticsEvent.forToolRun("skin_updater"));
-
         AccountManager.getAccounts().forEach(account -> {
             account.updateSkin();
             onTaskComplete.accept(null);

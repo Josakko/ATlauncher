@@ -47,8 +47,6 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.PackManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.Markdown;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -104,7 +102,6 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {
-                Analytics.trackEvent(AnalyticsEvent.forPackInstall(result));
                 new InstanceInstallerDialog(result, false);
             }
         });
@@ -133,7 +130,6 @@ public class UnifiedPackCard extends JPanel implements RelocalizationListener {
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {
-                Analytics.trackEvent(AnalyticsEvent.forPackInstall(result, true));
                 new InstanceInstallerDialog(result, true);
             }
         });

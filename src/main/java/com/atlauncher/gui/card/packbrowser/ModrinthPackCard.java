@@ -42,8 +42,6 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
@@ -85,7 +83,6 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {
-                Analytics.trackEvent(AnalyticsEvent.forPackInstall(searchHit));
                 new InstanceInstallerDialog(searchHit, false);
             }
         });
@@ -114,7 +111,6 @@ public class ModrinthPackCard extends JPanel implements RelocalizationListener {
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {
-                Analytics.trackEvent(AnalyticsEvent.forPackInstall(searchHit, true));
                 new InstanceInstallerDialog(searchHit, true);
             }
         });

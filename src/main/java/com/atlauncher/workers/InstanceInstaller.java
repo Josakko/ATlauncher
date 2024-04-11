@@ -116,11 +116,9 @@ import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ServerManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.network.GraphqlClient;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.FileUtils;
@@ -376,10 +374,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
                 saveServerJson();
             }
 
-            Analytics.trackEvent(
-                    AnalyticsEvent.forPackInstalled(pack, version, this.isServer, this.isReinstall,
-                            getAnalyticsPlatform(),
-                            this.loaderVersion == null ? null : this.loaderVersion.getLoaderType()));
 
             return success(true);
         } catch (Exception e) {
@@ -538,21 +532,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
         packVersion.version = version._curseForgeFile.displayName;
     }
 
-    private String getAnalyticsPlatform() {
-        if (this.curseForgeManifest != null) {
-            return "CurseForge";
-        } else if (this.modrinthManifest != null) {
-            return "Modrinth";
-        } else if (this.multiMCManifest != null) {
-            return "MultiMC";
-        } else if (this.technicModpack != null) {
-            return "Technic";
-        } else if (this.pack.vanillaInstance) {
-            return "Vanilla";
-        }
-
-        return "ATLauncher";
-    }
 
     private void downloadPackVersionJson() throws Exception {
         addPercent(5);

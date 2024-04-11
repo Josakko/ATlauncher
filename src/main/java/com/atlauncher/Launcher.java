@@ -62,10 +62,8 @@ import com.atlauncher.managers.PackManager;
 import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.managers.TechnicModpackUpdateManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.network.DownloadPool;
 import com.atlauncher.network.GraphqlClient;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.google.gson.JsonIOException;
@@ -154,9 +152,6 @@ public class Launcher {
 
         checkForExternalPackUpdates();
 
-        if (App.settings.enableAnalytics && Analytics.isEnabled()) {
-            Analytics.startSession(App.settings.selectedTabOnStartup);
-        }
         System.gc();
         PerformanceManager.end();
     }
@@ -186,7 +181,6 @@ public class Launcher {
             }
             File newFile = FileSystem.TEMP.resolve(saveAs).toFile();
             LogManager.info("Downloading Launcher Update");
-            Analytics.trackEvent(AnalyticsEvent.simpleEvent("launcher_update"));
 
             ProgressDialog<Boolean> progressDialog = new ProgressDialog<>(GetText.tr("Downloading Launcher Update"), 1,
                     GetText.tr("Downloading Launcher Update"));
@@ -248,7 +242,6 @@ public class Launcher {
             LogManager.logStackTrace(e);
         }
 
-        Analytics.endSession();
         System.exit(0);
     }
 

@@ -63,10 +63,6 @@ public class ConfigManager {
         try {
             String[] keyParts = key.split("\\.");
 
-            if (source == null) {
-                return false;
-            }
-
             if (keyParts.length == 1) {
                 return source.containsKey(keyParts[0]);
             }

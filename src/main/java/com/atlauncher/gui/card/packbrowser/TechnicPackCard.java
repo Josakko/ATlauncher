@@ -40,8 +40,6 @@ import com.atlauncher.gui.components.BackgroundImageLabel;
 import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
@@ -80,7 +78,6 @@ public class TechnicPackCard extends JPanel implements RelocalizationListener {
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {
-                Analytics.trackEvent(AnalyticsEvent.forPackInstall(pack));
                 new InstanceInstallerDialog(pack);
             }
         });

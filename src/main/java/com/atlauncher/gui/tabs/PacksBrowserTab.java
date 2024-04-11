@@ -63,8 +63,6 @@ import com.atlauncher.gui.panels.packbrowser.UnifiedPacksPanel;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.MinecraftManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.Utils;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
@@ -297,15 +295,7 @@ public final class PacksBrowserTab extends JPanel
         }
 
         platformTabbedPane.addChangeListener(e -> {
-            PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane
-                    .getSelectedComponent();
-
-            // send analytics page view
-            if (selectedPanel.getPlatformName().equals("UnifiedModPackSearch")) {
-                Analytics.sendScreenView("Unified ModPack Search");
-            } else {
-                Analytics.sendScreenView(selectedPanel.getPlatformName() + " Platform Packs");
-            }
+            // PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane.getSelectedComponent();
 
             afterTabChange();
         });
@@ -429,9 +419,6 @@ public final class PacksBrowserTab extends JPanel
             disableTabsWhileLoading();
             page += 1;
 
-            Analytics.trackEvent(
-                    AnalyticsEvent.forSearchEventPlatform("add_pack", searchField.getText(), page,
-                            selectedPanel.getPlatformName()));
 
             // load in the content for the platform
             new Thread(() -> {
@@ -469,7 +456,7 @@ public final class PacksBrowserTab extends JPanel
     }
 
     private void executeSearch() {
-        PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane.getSelectedComponent();
+        // PackBrowserPlatformPanel selectedPanel = (PackBrowserPlatformPanel) platformTabbedPane.getSelectedComponent();
 
         loading = true;
         page = 1;
@@ -477,11 +464,6 @@ public final class PacksBrowserTab extends JPanel
         // disable the tabs
         disableTabsWhileLoading();
 
-        if (!searchField.getText().isEmpty()) {
-            Analytics.trackEvent(
-                    AnalyticsEvent.forSearchEventPlatform("add_pack", searchField.getText(), page,
-                            selectedPanel.getPlatformName()));
-        }
 
         // load in the content for the platform
         load(true);

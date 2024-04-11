@@ -44,8 +44,6 @@ import com.atlauncher.gui.dialogs.InstanceInstallerDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
@@ -91,7 +89,6 @@ public class CurseForgePackCard extends JPanel implements RelocalizationListener
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {
-                Analytics.trackEvent(AnalyticsEvent.forPackInstall(project));
                 new InstanceInstallerDialog(project);
             }
         });
@@ -120,7 +117,6 @@ public class CurseForgePackCard extends JPanel implements RelocalizationListener
                     App.navigate(UIConstants.LAUNCHER_ACCOUNTS_TAB);
                 }
             } else {
-                Analytics.trackEvent(AnalyticsEvent.forPackInstall(project, true));
                 new InstanceInstallerDialog(project, true);
             }
         });

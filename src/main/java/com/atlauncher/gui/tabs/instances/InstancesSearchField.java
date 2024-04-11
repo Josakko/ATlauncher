@@ -25,8 +25,6 @@ import javax.swing.JTextField;
 
 import org.mini2Dx.gettext.GetText;
 
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.viewmodel.base.IInstancesTabViewModel;
 import com.formdev.flatlaf.icons.FlatSearchIcon;
 
@@ -61,7 +59,6 @@ public final class InstancesSearchField extends JTextField implements KeyListene
     @Override
     public void keyReleased(KeyEvent e) {
         if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-            Analytics.trackEvent(AnalyticsEvent.forSearchEvent("instances", this.getText()));
             this.viewModel.setSearch(this.getText());
         }
     }

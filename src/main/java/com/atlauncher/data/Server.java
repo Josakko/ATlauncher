@@ -67,8 +67,6 @@ import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.PackManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.Utils;
@@ -150,8 +148,6 @@ public class Server {
         }
 
         boolean isATLauncherLaunchScript = isATLauncherLaunchScript();
-
-        Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_run", this));
 
         LogManager.info("Starting server " + name);
 
@@ -310,7 +306,6 @@ public class Server {
                 LogManager.info("Server has started. No further logs will be shown in this console. Please check for a separate window or tab for the server logs and provide those logs (not these ones) if asking for help.");
                 Toaster.instance().pop(GetText.tr("The server has been launched."));
             } else {
-                Analytics.endSession();
                 System.exit(0);
             }
         } catch (Exception e) {
@@ -383,8 +378,6 @@ public class Server {
     }
 
     public void backup() {
-        Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_backup", this));
-
         Timestamp timestamp = new Timestamp(new Date().getTime());
         String time = timestamp.toString().replaceAll("[^0-9]", "_");
         String filename = "Server-" + getSafeName() + "-" + time.substring(0, time.lastIndexOf("_")) + ".zip";
@@ -519,7 +512,6 @@ public class Server {
                 GetText.tr("Changing Description"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
 
         if (ret == 0) {
-            Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_description_change", this));
             description = textArea.getText();
             save();
         }
@@ -534,7 +526,6 @@ public class Server {
         if (ret == JFileChooser.APPROVE_OPTION) {
             File img = chooser.getSelectedFile();
             if (img.getAbsolutePath().endsWith(".png")) {
-                Analytics.trackEvent(AnalyticsEvent.forServerEvent("server_image_change", this));
                 try {
                     Utils.safeCopy(img, getRoot().resolve("server.png").toFile());
                     save();

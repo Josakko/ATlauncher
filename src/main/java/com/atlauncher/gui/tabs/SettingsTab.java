@@ -41,9 +41,7 @@ import com.atlauncher.gui.tabs.settings.LoggingSettingsTab;
 import com.atlauncher.gui.tabs.settings.ModsSettingsTab;
 import com.atlauncher.gui.tabs.settings.NetworkSettingsTab;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.managers.InstanceManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
+// import com.atlauncher.managers.InstanceManager;
 import com.atlauncher.utils.OS;
 import com.formdev.flatlaf.FlatLaf;
 
@@ -84,7 +82,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
             if (javaSettingsTab.isValidJavaPath() && javaSettingsTab.isValidJavaParamaters()
                     && networkSettingsTab.canConnectWithProxy()) {
                 boolean reloadTheme = generalSettingsTab.needToReloadTheme();
-                boolean themeChanged = generalSettingsTab.themeChanged();
+                // boolean themeChanged = generalSettingsTab.themeChanged();
                 boolean languageChanged = generalSettingsTab.languageChanged();
                 boolean checkForExternalPackUpdates = modsSettingsTab.needToCheckForExternalPackUpdates();
                 generalSettingsTab.save();
@@ -99,9 +97,7 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 if (checkForExternalPackUpdates) {
                     App.launcher.checkForExternalPackUpdates();
                 }
-                if (themeChanged) {
-                    Analytics.trackEvent(AnalyticsEvent.forThemeChange(App.THEME.getName()));
-                }
+
                 if (languageChanged) {
                     int ret = DialogManager.yesNoDialog().setType(DialogManager.INFO)
                             .setTitle(GetText.tr("Language Changed. Restart?"))
@@ -124,9 +120,6 @@ public class SettingsTab extends JPanel implements Tab, RelocalizationListener {
                 App.TOASTER.pop("Settings Saved");
             }
         });
-
-        tabbedPane.addChangeListener(e -> Analytics
-                .sendScreenView(((Tab) tabbedPane.getSelectedComponent()).getAnalyticsScreenViewName() + " Settings"));
     }
 
     @Override

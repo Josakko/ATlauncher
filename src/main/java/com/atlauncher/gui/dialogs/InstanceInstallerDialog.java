@@ -96,7 +96,6 @@ import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.PackManager;
-import com.atlauncher.network.Analytics;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.CurseForgeApi;
 import com.atlauncher.utils.ModrinthApi;
@@ -196,8 +195,7 @@ public class InstanceInstallerDialog extends JDialog {
         this.preselectedModrinthVersion = preselectedModrinthVersion;
         this.isServer = isServer;
 
-        Analytics.sendScreenView("Instance Installer Dialog");
-
+        
         if (object instanceof Pack) {
             handlePackInstall(object);
         } else if (object instanceof CurseForgeProject) {

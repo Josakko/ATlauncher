@@ -33,8 +33,6 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.data.ConsoleState;
 import com.atlauncher.evnt.manager.ConsoleStateManager;
 import com.atlauncher.managers.DialogManager;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.OS;
 
 @SuppressWarnings("serial")
@@ -81,17 +79,14 @@ public final class TrayMenu extends JPopupMenu {
                         .setType(DialogManager.ERROR).show();
 
                 if (ret == DialogManager.YES_OPTION) {
-                    Analytics.trackEvent(AnalyticsEvent.simpleEvent("tray_kill_minecraft"));
                     App.launcher.killMinecraft();
                 }
             }
         }));
         this.toggleConsoleButton.addActionListener(e -> {
-            Analytics.trackEvent(AnalyticsEvent.simpleEvent("tray_toggle_console"));
             App.console.setVisible(!App.console.isVisible());
         });
         this.killOpenDialogsButton.addActionListener(e -> {
-            Analytics.trackEvent(AnalyticsEvent.simpleEvent("tray_kill_open_dialogs"));
             for (Frame frame : Frame.getFrames()) {
                 for (Window window : frame.getOwnedWindows()) {
                     if (window.getName().startsWith("dialog")) {
@@ -102,11 +97,9 @@ public final class TrayMenu extends JPopupMenu {
             }
         });
         this.openLauncherFolderButton.addActionListener(e -> {
-            Analytics.trackEvent(AnalyticsEvent.simpleEvent("tray_open_launcher_folder"));
             OS.openFileExplorer(FileSystem.BASE_DIR);
         });
         this.quitButton.addActionListener(e -> {
-            Analytics.trackEvent(AnalyticsEvent.simpleEvent("tray_quit"));
             try {
                 if (SystemTray.isSupported()) {
                     SystemTray.getSystemTray().remove(App.trayIcon);
@@ -114,7 +107,6 @@ public final class TrayMenu extends JPopupMenu {
             } catch (Exception ignored) {
             }
 
-            Analytics.endSession();
             System.exit(0);
         });
     }
