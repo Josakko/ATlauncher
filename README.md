@@ -8,6 +8,10 @@
 ATLauncher is a launcher for Minecraft which integrates multiple different modpacks to allow you to download and install
 modpacks easily and quickly.
 
+## Need help?
+
+Since this is not official ATlauncher repo any issues with this repo should **not** be reported to their discord server or github, so if you need any help with this repo my [discord server](https://discord.gg/xgET5epJE6).
+
 ## Links
 
 -   [ATLauncher Website](https://atlauncher.com)
