@@ -88,7 +88,7 @@ begin
   end else if CurPageID = wpReady then begin
     DownloadPage.Clear;
 
-    DownloadPage.Add('https://download.nodecdn.net/containers/atl/ATLauncher.exe', '{#MyAppName}.exe', '');
+    DownloadPage.Add('https://github.com/Josakko/ATlauncher/releases/download/v1/ATLauncher-3.4.36.2.exe', '{#MyAppName}.exe', '');
 
     if WizardIsComponentSelected('java') then begin
       if IsWin64 then begin
