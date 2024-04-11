@@ -45,8 +45,6 @@ import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
-import com.atlauncher.network.Analytics;
-import com.atlauncher.network.analytics.AnalyticsEvent;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.reflect.TypeToken;
@@ -108,14 +106,12 @@ public class AccountManager {
                 newAccounts.addAll(accounts.stream().filter(account -> {
                     if (account instanceof MicrosoftAccount) {
                         MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
-                        return microsoftAccount.accessToken != null
-                                && microsoftAccount.accessToken.split("\\.").length == 3;
+                        return microsoftAccount.accessToken.split("\\.").length == 3 && microsoftAccount.accessToken != null;
                     }
 
                     if (account instanceof MojangAccount) {
                         MojangAccount mojangAccount = (MojangAccount) account;
-                        return !mojangAccount.uuid.equals("00000000000000000000000000000000")
-                                && !mojangAccount.clientToken.isEmpty();
+                        return !mojangAccount.uuid.equals("00000000000000000000000000000000"); // && !mojangAccount.clientToken.isEmpty();
                     }
 
                     return !account.uuid.equals("00000000000000000000000000000000");
@@ -194,7 +190,7 @@ public class AccountManager {
             }
         }
 
-        saveAccounts(convertedAccounts);
+        _saveAccounts(convertedAccounts);
 
         try {
             Files.delete(FileSystem.USER_DATA);
@@ -204,12 +200,12 @@ public class AccountManager {
     }
 
     public static void saveAccounts() {
-        saveAccounts(ACCOUNTS.getValue());
+        _saveAccounts(ACCOUNTS.getValue());
     }
 
-    private static void saveAccounts(List<AbstractAccount> accounts) {
-        try (OutputStreamWriter fileWriter = new OutputStreamWriter(
-                new FileOutputStream(FileSystem.ACCOUNTS.toFile()), StandardCharsets.UTF_8)) {
+    private static void _saveAccounts(List<AbstractAccount> accounts) {
+        // save to configs/accounts.json
+        try (OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(FileSystem.ACCOUNTS.toFile()), StandardCharsets.UTF_8)) {
             Gsons.DEFAULT.toJson(accounts, abstractAccountListType, fileWriter);
         } catch (JsonIOException | IOException e) {
             LogManager.logStackTrace(e);
@@ -219,7 +215,6 @@ public class AccountManager {
     public static void addAccount(AbstractAccount account) {
         String accountType = account instanceof MicrosoftAccount ? "Microsoft" : "Mojang";
 
-        Analytics.trackEvent(AnalyticsEvent.forAccountAdd(accountType));
         LogManager.info("Added " + accountType + " Account " + account);
 
         List<AbstractAccount> accounts = ACCOUNTS.getValue();
