@@ -382,7 +382,7 @@ public class MCLauncher {
             // Start or passed in arguments
             arguments.add(instance.getRootDirectory().getAbsolutePath()); // Path
             arguments.add(username); // Username
-            arguments.add(account.getSessionToken()); // Session
+            arguments.add(Objects.toString(account.getSessionToken())); // Session
             arguments.add(Constants.LAUNCHER_NAME + " - " + instance.getName()); // Frame title
             arguments.add(App.settings.windowWidth + ""); // Window Width
             arguments.add(App.settings.windowHeight + ""); // Window Height
@@ -438,7 +438,7 @@ public class MCLauncher {
         argument = argument.replace("${launcher_version}", Constants.VERSION.toStringForLogging());
         argument = argument.replace("${natives_directory}", nativesDir);
         argument = argument.replace("${user_type}", account.getUserType());
-        argument = argument.replace("${auth_session}", account.getSessionToken());
+        argument = argument.replace("${auth_session}", Objects.toString(account.getSessionToken()));
         argument = argument.replace("${library_directory}", FileSystem.LIBRARIES.toAbsolutePath().toString());
         argument = argument.replace("${classpath}", classpath);
         argument = argument.replace("${classpath_separator}", File.pathSeparator);
