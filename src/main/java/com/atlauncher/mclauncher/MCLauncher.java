@@ -95,6 +95,7 @@ public class MCLauncher {
         // LogManager.info("Launching Minecraft with the following arguments: " + arguments);
         LogManager.info("Launching Minecraft with the following arguments (user related stuff has been removed): "
                 + censorArguments(arguments, account, props, username));
+        
         ProcessBuilder processBuilder = new ProcessBuilder(arguments);
         processBuilder.directory(instance.getRootDirectory());
         processBuilder.redirectErrorStream(true);
@@ -375,6 +376,7 @@ public class MCLauncher {
             arguments.add(cpb.toString());
         }
 
+        // anything prior to 1.6.1 is legacy launched 
         if (instance.usesLegacyLaunch()) {
             arguments.add("com.atlauncher.mclauncher.legacy.LegacyMCLauncher");
             // Start or passed in arguments
@@ -384,32 +386,35 @@ public class MCLauncher {
             arguments.add(Constants.LAUNCHER_NAME + " - " + instance.getName()); // Frame title
             arguments.add(App.settings.windowWidth + ""); // Window Width
             arguments.add(App.settings.windowHeight + ""); // Window Height
+
             if (App.settings.maximiseMinecraft) {
                 arguments.add("true"); // Maximised
             } else {
                 arguments.add("false"); // Not Maximised
             }
+
+            return arguments;
+        }
+        
+        arguments.add(instance.getMainClass());
+
+
+        for (String argument : instance.arguments.gameAsStringList()) {
+            if (IGNORED_ARGUMENTS.contains(argument)) {
+                continue;
+            }
+            
+            arguments.add(replaceArgument(argument, instance, account, props, nativesDir, classpath, username));
+        }
+        
+        if (App.settings.maximiseMinecraft) {
+            arguments.add("--width=" + OS.getMaximumWindowWidth());
+            arguments.add("--height=" + OS.getMaximumWindowHeight());
         } else {
-            arguments.add(instance.getMainClass());
+            arguments.add("--width=" + App.settings.windowWidth);
+            arguments.add("--height=" + App.settings.windowHeight);
         }
-
-        if (!instance.usesLegacyLaunch()) {
-            for (String argument : instance.arguments.gameAsStringList()) {
-                if (IGNORED_ARGUMENTS.contains(argument)) {
-                    continue;
-                }
-
-                arguments.add(replaceArgument(argument, instance, account, props, nativesDir, classpath, username));
-            }
-
-            if (App.settings.maximiseMinecraft) {
-                arguments.add("--width=" + OS.getMaximumWindowWidth());
-                arguments.add("--height=" + OS.getMaximumWindowHeight());
-            } else {
-                arguments.add("--width=" + App.settings.windowWidth);
-                arguments.add("--height=" + App.settings.windowHeight);
-            }
-        }
+        
 
         return arguments;
     }

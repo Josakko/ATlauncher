@@ -3106,6 +3106,7 @@ public class Instance extends MinecraftVersion {
         return Files.exists(getRoot().resolve("bin/modpack.jar"));
     }
 
+    // anything prior to 1.6.1 is legacy launched 
     public boolean shouldUseLegacyLaunch() {
         try {
             String[] versionParts = id.split("\\.", 3);
