@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +29,7 @@ import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
+import com.atlauncher.data.OfflineAccount;
 import com.atlauncher.gui.dialogs.ChangeSkinDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
@@ -158,17 +157,20 @@ public class AccountsViewModel implements IAccountsViewModel {
         return null;
     }
 
-    private void addNewAccount(LoginResponse response) {
-        UUID uuid = UUID.nameUUIDFromBytes(("OfflinePlayer:" + loginUsername).getBytes(StandardCharsets.UTF_8));
+    private void addNewOfflineAccount() {
+        OfflineAccount account = new OfflineAccount(loginUsername);
 
+        AccountManager.addAccount(account);
+        pushNewAccounts();
+    }
+
+    private void addNewMojangAccount(LoginResponse response) {
         MojangAccount account = new MojangAccount(
                 loginUsername,
                 loginPassword,
-                loginUsername,
-                uuid.toString(),
-                false,
-                "",
-                new HashMap<>());
+                response,
+                loginRemember,
+                getClientToken());
 
         AccountManager.addAccount(account);
         pushNewAccounts();
@@ -194,6 +196,14 @@ public class AccountsViewModel implements IAccountsViewModel {
             mojangAccount.store = response.getAuth().saveForStorage();
 
             AccountManager.saveAccounts();
+        } else if (account instanceof OfflineAccount) {
+            OfflineAccount offlineAccount = (OfflineAccount) account;
+
+            offlineAccount.username = loginUsername;
+            offlineAccount.minecraftUsername = loginUsername;
+            offlineAccount.store = response.getAuth().saveForStorage();
+
+            AccountManager.saveAccounts();
         }
 
         LogManager.info("Edited Account " + account);
@@ -205,19 +215,31 @@ public class AccountsViewModel implements IAccountsViewModel {
     @NotNull
     @Override
     public LoginPostResult loginPost() {
-//        if (loginResponse != null && loginResponse.hasAuth() && loginResponse.isValidAuth()) {
-        if (selectedAccountIndex == -1) {
-            addNewAccount(loginResponse);
-            invalidateClientToken();
-            return new LoginPostResult.Added();
-        } else {
+        if (loginResponse != null && loginResponse.getRealAccountType() == "mojang" && loginResponse.hasAuth()
+                && loginResponse.isValidAuth()) {
+            if (selectedAccountIndex == -1) {
+                addNewMojangAccount(loginResponse);
+                invalidateClientToken();
+                return new LoginPostResult.Added();
+            }
+            
             editAccount(loginResponse);
             invalidateClientToken();
             return new LoginPostResult.Edited();
+        } else if (loginResponse != null && loginResponse.getRealAccountType() == "offline") {
+            if (selectedAccountIndex == -1) {
+                addNewOfflineAccount();
+                invalidateClientToken();
+                return new LoginPostResult.Added();
+            }
+
+            editAccount(loginResponse);
+            invalidateClientToken();
+            return new LoginPostResult.Edited();
+
         }
-//        } else {
-//            return new LoginPostResult.Error(loginResponse != null ? loginResponse.getErrorMessage() : null);
-//        }
+        
+        return new LoginPostResult.Error(loginResponse != null ? loginResponse.getErrorMessage() : null);
     }
 
     @Override
@@ -227,16 +249,21 @@ public class AccountsViewModel implements IAccountsViewModel {
 
     @Override
     public void login() {
-        loginResponse = Authentication.checkAccount(loginUsername, loginPassword, getClientToken());
+        if (loginPassword == null || loginPassword.isEmpty()) {
+            loginResponse = Authentication.checkAccount(loginUsername);
+        } else {
+            loginResponse = Authentication.checkAccount(loginUsername, loginPassword, getClientToken());
+        }
+        
     }
 
     @Override
     public boolean refreshAccessToken() {
         AbstractAccount abstractAccount = getSelectedAccount();
+
         if (abstractAccount instanceof MicrosoftAccount) {
             MicrosoftAccount account = (MicrosoftAccount) abstractAccount;
-            boolean success = account
-                    .refreshAccessToken(true);
+            boolean success = account.refreshAccessToken(true);
 
             if (!success) {
                 account.mustLogin = true;

@@ -49,6 +49,7 @@ import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
+import com.atlauncher.data.OfflineAccount;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
@@ -107,7 +108,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                         "account, you can get one " +
                         "<a href=\"https://atl.pw/create-account\">by buying " +
                         "Minecraft here</a>. ATLauncher doesn't work with cracked" +
-                        " accounts."))
+                        " accounts, but this one does..."))
                 .build());
         infoTextPane.setEditable(false);
         infoTextPane.addHyperlinkListener(e -> {
@@ -405,24 +406,31 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 refreshAccessTokenMenuItem.setVisible(false);
             } else {
 
-                usernameLabel.setVisible(account instanceof MojangAccount);
-                usernameField.setVisible(account instanceof MojangAccount);
+                usernameLabel.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount);
+                usernameField.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount);
                 passwordLabel.setVisible(account instanceof MojangAccount);
                 passwordField.setVisible(account instanceof MojangAccount);
                 rememberLabel.setVisible(account instanceof MojangAccount);
                 rememberField.setVisible(account instanceof MojangAccount);
-                leftButton.setVisible(account instanceof MojangAccount);
+
+                leftButton.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount);
                 rightButton.setVisible(true);
-                loginWithMicrosoftButton.setVisible(
-                        account instanceof MicrosoftAccount);
-                refreshAccessTokenMenuItem.setVisible(
-                        account instanceof MicrosoftAccount);
+
+                loginWithMicrosoftButton.setVisible(account instanceof MicrosoftAccount);
+                refreshAccessTokenMenuItem.setVisible(account instanceof MicrosoftAccount);
 
                 if (account instanceof MojangAccount) {
                     MojangAccount mojangAccount = (MojangAccount) account;
                     usernameField.setText(mojangAccount.username);
                     passwordField.setText(mojangAccount.password);
                     rememberField.setSelected(mojangAccount.remember);
+
+                } else if (account instanceof OfflineAccount) {
+                    OfflineAccount offlineAccount = (OfflineAccount) account;
+                    usernameField.setText(offlineAccount.username);
+
+                    passwordField.setText("");
+                    rememberField.setSelected(false);
                 } else {
                     usernameField.setText("");
                     passwordField.setText("");

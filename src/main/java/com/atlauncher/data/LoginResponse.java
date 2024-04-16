@@ -24,26 +24,42 @@ public class LoginResponse {
     private boolean offline;
     private boolean hasError;
     private String errorMessage;
-    public UserAuthentication auth;
+    private UserAuthentication auth;
     private final String username;
+    // "mojang" or "offline"
+    private String accountType;
 
-    public LoginResponse(String username) {
-        this.offline = false; // change maybe ?? 
+    public LoginResponse(String username, String realAccountType) {
         this.hasError = false;
         this.auth = null;
         this.username = username;
+        this.accountType = realAccountType;
+
+        if (realAccountType == "offline") {
+            this.offline = true;
+        } else {
+            this.offline = false;
+        }
     }
 
     public void setOffline() {
-        this.offline = true;
+        if (accountType != "offline") {
+            this.offline = true;
+        }
     }
 
     public void setOnline() {
-        this.offline = false;
+        if (accountType != "offline") {
+            this.offline = false;
+        }
     }
 
     public boolean isOffline() {
         return this.offline;
+    }
+
+    public String getRealAccountType() {
+        return this.accountType;
     }
 
     public void setErrorMessage(String errorMessage) {
@@ -95,10 +111,19 @@ public class LoginResponse {
     }
 
     public void save() {
-        MojangAccount account = (MojangAccount) AccountManager.getAccountByName(this.username);
+        if (accountType == "mojang") {
+            MojangAccount account = (MojangAccount) AccountManager.getAccountByName(this.username);
 
-        if (account != null) {
-            account.store = this.auth.saveForStorage();
+            if (account != null) {
+                account.store = this.auth.saveForStorage();
+            }
+        } else if (accountType == "offline") {
+            OfflineAccount account = (OfflineAccount) AccountManager.getAccountByName(this.username);
+
+            if (account != null) {
+                account.store = this.auth.saveForStorage();
+            }
         }
+
     }
 }

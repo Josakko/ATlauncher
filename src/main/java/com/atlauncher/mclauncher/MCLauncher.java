@@ -38,6 +38,7 @@ import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
+import com.atlauncher.data.OfflineAccount;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LoggingClient;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
@@ -52,6 +53,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
+
+import io.reactivex.rxjava3.internal.util.ExceptionHelper;
+import jdk.internal.net.http.common.Log;
+import jnr.ffi.annotations.In;
 
 public class MCLauncher {
     public static final List<String> IGNORED_ARGUMENTS = new ArrayList<String>() {
@@ -80,6 +85,12 @@ public class MCLauncher {
         }
 
         return launch(account, instance, props, nativesTempDir.toFile(), lwjglNativesTempDir, wrapperCommand, username);
+    }
+
+    public static Process launch(OfflineAccount account, Instance instance, LoginResponse response, Path nativesTempDir,
+            Path lwjglNativesTempDir, String wrapperCommand, String username) throws Exception {
+        
+        return launch(account, instance, "[]", nativesTempDir.toFile(), lwjglNativesTempDir, wrapperCommand, username);
     }
 
     private static Process launch(AbstractAccount account, Instance instance, String props, File nativesDir,

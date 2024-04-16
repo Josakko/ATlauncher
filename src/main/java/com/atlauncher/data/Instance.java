@@ -967,7 +967,7 @@ public class Instance extends MinecraftVersion {
                     LoginResponse session;
 
                     if (offline) {
-                        session = new LoginResponse(mojangAccount.username);
+                        session = new LoginResponse(mojangAccount.username, "mojang");
                         session.setOffline();
                     } else {
                         LogManager.info("Logging into Minecraft!");
@@ -1050,6 +1050,27 @@ public class Instance extends MinecraftVersion {
                     }
 
                     process = MCLauncher.launch(microsoftAccount, this, nativesTempDir,
+                            LWJGLManager.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
+                            wrapperCommand, username);
+                } else if (account instanceof OfflineAccount) {
+                    OfflineAccount offlineAccount = (OfflineAccount) account;
+                    LoginResponse session = offlineAccount.login();
+
+                    if (enableCommands && preLaunchCommand != null) {
+                        if (!executeCommand(preLaunchCommand)) {
+                            LogManager.error("Failed to execute pre-launch command");
+
+                            App.launcher.setMinecraftLaunched(false);
+
+                            if (App.launcher.getParent() != null) {
+                                App.launcher.getParent().setVisible(true);
+                            }
+
+                            return;
+                        }
+                    }
+
+                    process = MCLauncher.launch(offlineAccount, this, session, nativesTempDir,
                             LWJGLManager.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
                             wrapperCommand, username);
                 }

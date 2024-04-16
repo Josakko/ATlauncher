@@ -36,16 +36,41 @@ import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 
 public class Authentication {
     public static LoginResponse checkAccount(String username, String password, String clientToken) {
-        // YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(App.settings.proxy, clientToken).createUserAuthentication(Agent.MINECRAFT);
+        YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(App.settings.proxy, clientToken).createUserAuthentication(Agent.MINECRAFT);
 
-        LoginResponse response = new LoginResponse(username);
-        response.setOffline();
+        LoginResponse response = new LoginResponse(username, "mojang");
 
+        auth.setUsername(username);
+        auth.setPassword(password);
+
+        LogManager.debug("Logging into mojang account " + username);
+
+        if (auth.canLogIn()) {
+            try {
+                auth.logIn();
+                response.setAuth(auth);
+            } catch (AuthenticationException e) {
+                if (e.getMessage().contains("410")) {
+                    response.setErrorMessage(GetText.tr(
+                            "Account has been migrated to a Microsoft account. Please use the 'Login with Microsoft' button instead."));
+                } else {
+                    response.setErrorMessage(e.getMessage());
+                }
+
+                LogManager.error("Authentication failed");
+            }
+        }
+
+        return response;
+    }
+
+    public static LoginResponse checkAccount(String username) {
+        LoginResponse response = new LoginResponse(username, "offline");
 
         Agent agent = new Agent(username, 1);
         Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(228));
 
-        response.auth = new YggdrasilUserAuthentication(new YggdrasilAuthenticationService(proxy, null), agent) {
+        response.setAuth(new YggdrasilUserAuthentication(new YggdrasilAuthenticationService(proxy, null), agent) {
             @Override
             protected String getUsername() {
                 return username;
@@ -55,35 +80,18 @@ public class Authentication {
             public PropertyMap getUserProperties() {
                 return new PropertyMap();
             }
-        };
+        });
 
-
-//        auth.setUsername(username);
-//        auth.setPassword(password);
-//
-//        if (auth.canLogIn()) {
-//            try {
-//                auth.logIn();
-//                response.setAuth(auth);
-//            } catch (AuthenticationException e) {
-//                if (e.getMessage().contains("410")) {
-//                    response.setErrorMessage(GetText.tr(
-//                            "Account has been migrated to a Microsoft account. Please use the 'Login with Microsoft' button instead."));
-//                } else {
-//                    response.setErrorMessage(e.getMessage());
-//                }
-//
-//                LogManager.error("Authentication failed");
-//            }
-//        }
+        LogManager.debug("Logged into offline account " + username);
 
         return response;
     }
 
+
     public static LoginResponse login(MojangAccount account, boolean usePassword) {
         UserAuthentication auth = new YggdrasilAuthenticationService(App.settings.proxy, account.clientToken)
                 .createUserAuthentication(Agent.MINECRAFT);
-        LoginResponse response = new LoginResponse(account.username);
+        LoginResponse response = new LoginResponse(account.username, "mojang");
 
         if (!usePassword && account.store != null) {
             auth.loadFromStorage(account.store);

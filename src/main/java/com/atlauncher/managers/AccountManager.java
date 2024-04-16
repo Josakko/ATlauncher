@@ -45,6 +45,7 @@ import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Account;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
+import com.atlauncher.data.OfflineAccount;
 import com.atlauncher.utils.Utils;
 import com.google.gson.JsonIOException;
 import com.google.gson.reflect.TypeToken;
@@ -106,12 +107,16 @@ public class AccountManager {
                 newAccounts.addAll(accounts.stream().filter(account -> {
                     if (account instanceof MicrosoftAccount) {
                         MicrosoftAccount microsoftAccount = (MicrosoftAccount) account;
-                        return microsoftAccount.accessToken.split("\\.").length == 3 && microsoftAccount.accessToken != null;
-                    }
-
-                    if (account instanceof MojangAccount) {
+                        return microsoftAccount.accessToken.split("\\.").length == 3
+                                && microsoftAccount.accessToken != null;
+                        
+                    } else if (account instanceof MojangAccount) {
                         MojangAccount mojangAccount = (MojangAccount) account;
                         return !mojangAccount.uuid.equals("00000000000000000000000000000000"); // && !mojangAccount.clientToken.isEmpty();
+
+                    } else if (account instanceof OfflineAccount) {
+                        OfflineAccount offlineAccount = (OfflineAccount) account;
+                        return !offlineAccount.uuid.equals("00000000000000000000000000000000");
                     }
 
                     return !account.uuid.equals("00000000000000000000000000000000");
@@ -213,7 +218,9 @@ public class AccountManager {
     }
 
     public static void addAccount(AbstractAccount account) {
-        String accountType = account instanceof MicrosoftAccount ? "Microsoft" : "Mojang";
+        String accountType = (account instanceof MicrosoftAccount) ? "Microsoft" : 
+                             (account instanceof MojangAccount) ? "Mojang" :
+                             (account instanceof OfflineAccount) ? "Offline" : "";
 
         LogManager.info("Added " + accountType + " Account " + account);
 
