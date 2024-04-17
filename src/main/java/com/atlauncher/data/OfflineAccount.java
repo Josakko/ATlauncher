@@ -57,7 +57,6 @@ public class OfflineAccount extends AbstractAccount {
 
     public LoginResponse login() {
         LoginResponse response = new LoginResponse(this.minecraftUsername, "offline");
-        response.setOffline();
         
         LogManager.info("Logged into " + this.minecraftUsername + " offline account.");
 

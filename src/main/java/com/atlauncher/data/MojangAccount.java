@@ -43,6 +43,7 @@ import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Utils;
 
+// since mojang accounts arent the thing anymore maybe remove this  ??
 public class MojangAccount extends AbstractAccount {
     /**
      * Auto generated serial.
@@ -235,14 +236,15 @@ public class MojangAccount extends AbstractAccount {
 
                 int ret = DialogManager.confirmDialog().setTitle(GetText.tr("Enter Password")).setContent(panel).show();
 
+                String passwordEntry = new String(passwordField.getPassword());
                 if (ret == DialogManager.OK_OPTION) {
-                    if (passwordField.getPassword().length == 0) {
+                    if (!Utils.isEntryValid(passwordEntry)) {
                         LogManager.error("Aborting login for " + this.minecraftUsername + ", no password entered");
                         App.launcher.setMinecraftLaunched(false);
                         return null;
                     }
 
-                    this.setPassword(new String(passwordField.getPassword()));
+                    this.setPassword(passwordEntry);
                 } else {
                     LogManager.error("Aborting login for " + this.minecraftUsername);
                     App.launcher.setMinecraftLaunched(false);
@@ -250,8 +252,8 @@ public class MojangAccount extends AbstractAccount {
                 }
             }
 
-            response = Authentication.login(this, true);
         }
+        response = Authentication.login(this, true);
 
         if (response.hasError() && !response.isOffline()) {
             LogManager.error(response.getErrorMessage());
