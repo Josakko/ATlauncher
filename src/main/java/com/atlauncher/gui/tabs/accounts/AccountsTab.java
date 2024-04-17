@@ -61,6 +61,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.ComboItem;
 import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
+import com.atlauncher.utils.Utils;
 import com.atlauncher.viewmodel.base.IAccountsViewModel;
 import com.atlauncher.viewmodel.base.IAccountsViewModel.LoginPostResult;
 import com.atlauncher.viewmodel.base.IAccountsViewModel.LoginPreCheckResult;
@@ -474,6 +475,16 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
      */
     @SuppressWarnings("unchecked")
     private void login() {
+        if (!Utils.isEntryValid(usernameField.getText())) {
+            DialogManager
+                    .okDialog()
+                    .setTitle(GetText.tr("Account Not Added"))
+                    .setContent(GetText.tr("Invalid username."))
+                    .setType(DialogManager.ERROR)
+                    .show();
+            return;
+        }
+
         // Pre check
         LoginPreCheckResult preCheckResult = viewModel.loginPreCheck();
         if (preCheckResult instanceof LoginPreCheckResult.Exists) {

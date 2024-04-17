@@ -1676,4 +1676,8 @@ public class Utils {
 
         return false;
     }
+
+    public static boolean isEntryValid(String entry) {
+        return !(entry == null || entry.isBlank());
+    }
 }
