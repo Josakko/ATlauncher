@@ -46,12 +46,14 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.AbstractAccount;
+import com.atlauncher.data.ElybyAccount;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.OfflineAccount;
 import com.atlauncher.evnt.listener.RelocalizationListener;
 import com.atlauncher.evnt.manager.RelocalizationManager;
+import com.atlauncher.gui.dialogs.LoginWithElyByDialog;
 import com.atlauncher.gui.dialogs.LoginWithMicrosoftDialog;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.Tab;
@@ -84,11 +86,12 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private JButton rightButton;
     private JButton loginWithMicrosoftButton;
     private JMenuItem refreshAccessTokenMenuItem;
+    private JButton loginWithElyByButton;
     private final JMenuItem updateSkin;
     private final JMenuItem changeSkin;
     private final JPopupMenu contextMenu; // Right click menu
 
-    @SuppressWarnings("unchecked")
+
     public AccountsTab() {
         viewModel = new AccountsViewModel();
         setLayout(new BorderLayout());
@@ -276,9 +279,27 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 accountsComboBox.setSelectedItem(AccountManager.getSelectedAccount());
             }
         });
+
+        loginWithElyByButton = new JButton(GetText.tr("Login with Ely.by"));
+        loginWithElyByButton.addActionListener(e -> {
+            // TODO This should be handled by some reaction via listener
+            int numberOfAccountsBefore = viewModel.accountCount();
+            LoginWithElyByDialog dialog = new LoginWithElyByDialog();
+
+            if (numberOfAccountsBefore != viewModel.accountCount()) {
+                // account was added, so get the skin
+                if (dialog.account != null) {
+                    dialog.account.updateSkin();
+                }
+
+                viewModel.pushNewAccounts();
+                accountsComboBox.setSelectedItem(AccountManager.getSelectedAccount());
+            }
+        });
         buttons.add(leftButton);
         buttons.add(rightButton);
         buttons.add(loginWithMicrosoftButton);
+        buttons.add(loginWithElyByButton);
         bottomPanel.add(buttons, gbc);
 
         rightPanel.add(bottomPanel, BorderLayout.CENTER);
@@ -298,11 +319,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
         updateSkin = new JMenuItem(GetText.tr("Reload Skin"));
         updateSkin.addActionListener(e -> {
+            AbstractAccount account = viewModel.getSelectedAccount();
             viewModel.updateSkin();
 
             // TODO Have this done via listener
             // To describe, userSkin icon should be reactive, not active.
-            AbstractAccount account = viewModel.getSelectedAccount();
             userSkin.setIcon(account.getMinecraftSkin());
         });
         contextMenu.add(updateSkin);
@@ -404,9 +425,10 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 leftButton.setVisible(true);
                 rightButton.setVisible(true);
                 loginWithMicrosoftButton.setVisible(true);
+                loginWithElyByButton.setVisible(true);
                 refreshAccessTokenMenuItem.setVisible(false);
+            
             } else {
-
                 usernameLabel.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount);
                 usernameField.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount);
                 passwordLabel.setVisible(account instanceof MojangAccount);
@@ -416,9 +438,11 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
                 leftButton.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount);
                 rightButton.setVisible(true);
-
+                
                 loginWithMicrosoftButton.setVisible(account instanceof MicrosoftAccount);
                 refreshAccessTokenMenuItem.setVisible(account instanceof MicrosoftAccount);
+
+                loginWithElyByButton.setVisible(account instanceof ElybyAccount);
 
                 if (account instanceof MojangAccount) {
                     MojangAccount mojangAccount = (MojangAccount) account;
@@ -473,7 +497,6 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     /**
      * Run login steps, and react accordingly
      */
-    @SuppressWarnings("unchecked")
     private void login() {
         if (!Utils.isEntryValid(usernameField.getText())) {
             DialogManager

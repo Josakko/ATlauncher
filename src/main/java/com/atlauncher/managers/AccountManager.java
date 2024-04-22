@@ -43,6 +43,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.Gsons;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.Account;
+import com.atlauncher.data.ElybyAccount;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.OfflineAccount;
@@ -117,6 +118,10 @@ public class AccountManager {
                     } else if (account instanceof OfflineAccount) {
                         OfflineAccount offlineAccount = (OfflineAccount) account;
                         return !offlineAccount.uuid.equals("00000000000000000000000000000000");
+                    } else if (account instanceof ElybyAccount) {
+                        ElybyAccount elybyAccount = (ElybyAccount) account;
+                        return !elybyAccount.uuid.equals("00000000000000000000000000000000")
+                                && elybyAccount.accessToken != null;
                     }
 
                     return !account.uuid.equals("00000000000000000000000000000000");
@@ -220,7 +225,8 @@ public class AccountManager {
     public static void addAccount(AbstractAccount account) {
         String accountType = (account instanceof MicrosoftAccount) ? "Microsoft" : 
                              (account instanceof MojangAccount) ? "Mojang" :
-                             (account instanceof OfflineAccount) ? "Offline" : "";
+                             (account instanceof OfflineAccount) ? "Offline" :
+                             (account instanceof ElybyAccount) ? "ElyBy" : "";
 
         LogManager.info("Added " + accountType + " Account " + account);
 

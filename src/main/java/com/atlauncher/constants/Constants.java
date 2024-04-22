@@ -155,6 +155,26 @@ public class Constants {
             "2560x1440", "3440x1440", "3840x2160" };
     public static final String DEFAULT_JAVA_PARAMETERS = "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M";
 
+    // yeah i know that SECRET key should not be made public but ely.by api or more specifically their oauth system is little stupid so you must use secret key to get access token from auth code unlike ms where on the other hand you must have azure account with active subscription to register an app... and thats me complaining in code comment about something that nobody cares about anyway, i might remove this comment... (PS i though that that secret key was unimportant to be kept secret anyway cause its only used for getting access token so writing and paying for some server that is going to be just used as proxy to the ely.by that adds client secret to the requests would get me to the same effect but sure if someone wants to donate for hosting server contact me... :)  ) - longest (useless) comment ever
+    public static final String ELYBY_LOGIN_SECRET_KEY = "s6Bf9uEfKOJ69sPgAhmu3yRCMFGUQmV3yE6NlkQ8Zph-eWnnTbu1D7Nzww0qH-yT";
+    public static final String ELYBY_LOGIN_CLIENT_ID = "jklauncher";
+    public static final int ELYBY_LOGIN_REDIRECT_PORT = 28563;
+    public static final String ELYBY_LOGIN_REDIRECT_URL = "http://127.0.0.1:" + ELYBY_LOGIN_REDIRECT_PORT;
+    public static final String ELYBY_LOGIN_REDIRECT_URL_ENCODED = "http%3A%2F%2F127.0.0.1%3A" + ELYBY_LOGIN_REDIRECT_PORT;
+    public static final String[] ELYBY_LOGIN_SCOPES = { "account_info", "offline_access", "minecraft_server_session" };
+
+    // General ely.by login constants
+    public static final String ELYBY_API_URL = "ely.by";
+    public static final String ELYBY_LOGIN_URL = "https://account.ely.by/oauth2/v1" + "?client_id="
+            + ELYBY_LOGIN_CLIENT_ID + "&redirect_uri=" + ELYBY_LOGIN_REDIRECT_URL_ENCODED
+            + "&response_type=code" + "&prompt=select_account" + "&scope="
+            + String.join("%20", ELYBY_LOGIN_SCOPES);
+    public static final String ELYBY_AUTH_TOKEN_URL = "https://account.ely.by/api/oauth2/v1/token";
+    public static final String ELYBY_TOKEN_INFO_URL = "https://account.ely.by/api/account/v1/info";
+    public static final String ELYBY_REFRESH_TOKEN_URL = ELYBY_AUTH_TOKEN_URL;
+    public static final String ELYBY_SKIN_TEXTURE_URL = "http://skinsystem.ely.by/skins/";
+    public static final String ELYBY_TEXTURES_URL = "http://skinsystem.ely.by/textures/";
+
     // Custom for ATLauncher Microsoft login constants
     // if you fork or modify this launcher, you must not use this Client ID
     public static final String MICROSOFT_LOGIN_CLIENT_ID = "90890812-00d1-48a8-8d3f-38465ef43b58";

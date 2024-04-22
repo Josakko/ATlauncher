@@ -314,7 +314,10 @@ public class AccountsViewModel implements IAccountsViewModel {
     @Override
     public void updateSkin() {
         AbstractAccount account = getSelectedAccount();
+        account.updateUsername();
         account.updateSkin();
+        AccountManager.saveAccounts();
+        pushNewAccounts();
     }
 
     @Override

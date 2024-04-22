@@ -852,9 +852,14 @@ public class Instance extends MinecraftVersion {
             return false;
         }
 
-        // if Microsoft account must login again, then make sure to do that
+        // if Microsoft or Ely.by account must login again, then make sure to do that
         if (!offline && account instanceof MicrosoftAccount && ((MicrosoftAccount) account).mustLogin) {
             if (!((MicrosoftAccount) account).ensureAccountIsLoggedIn()) {
+                LogManager.info("You must login to your account before continuing.");
+                return false;
+            }
+        } else if (!offline && account instanceof ElybyAccount && ((ElybyAccount) account).mustLogin) {
+            if (!((ElybyAccount) account).ensureAccountIsLoggedIn()) {
                 LogManager.info("You must login to your account before continuing.");
                 return false;
             }
@@ -866,7 +871,7 @@ public class Instance extends MinecraftVersion {
             playerName = DialogManager.okDialog().setTitle(GetText.tr("Offline Player Name"))
                     .setContent(GetText.tr("Choose your offline player name:")).showInput(playerName);
 
-            if (playerName == null || playerName.isEmpty()) {
+            if (!Utils.isEntryValid(playerName)) {
                 LogManager.info("No player name provided for offline launch, so cancelling launch.");
                 return false;
             }
@@ -1054,7 +1059,6 @@ public class Instance extends MinecraftVersion {
                             wrapperCommand, username);
                 } else if (account instanceof OfflineAccount) {
                     OfflineAccount offlineAccount = (OfflineAccount) account;
-                    LoginResponse session = offlineAccount.login();
 
                     if (enableCommands && preLaunchCommand != null) {
                         if (!executeCommand(preLaunchCommand)) {
@@ -1070,7 +1074,51 @@ public class Instance extends MinecraftVersion {
                         }
                     }
 
-                    process = MCLauncher.launch(offlineAccount, this, session, nativesTempDir,
+                    process = MCLauncher.launch(offlineAccount, this, nativesTempDir,
+                            LWJGLManager.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
+                            wrapperCommand, username);
+                } else if (account instanceof ElybyAccount) {
+                    ElybyAccount elybyAccount = (ElybyAccount) account;
+
+                    if (!offline) {
+                        LogManager.info("Logging into Minecraft!");
+                        ProgressDialog<Boolean> loginDialog = new ProgressDialog<>(GetText.tr("Logging Into Minecraft"),
+                                0, GetText.tr("Logging Into Minecraft"), "Aborted login to Minecraft!");
+                        loginDialog.addThread(new Thread(() -> {
+                            loginDialog.setReturnValue(elybyAccount.ensureAccessTokenValid());
+                            loginDialog.close();
+                        }));
+                        loginDialog.start();
+
+                        if (!(Boolean) loginDialog.getReturnValue()) {
+                            LogManager.error("Failed to login");
+
+                            App.launcher.setMinecraftLaunched(false);
+                            if (App.launcher.getParent() != null) {
+                                App.launcher.getParent().setVisible(true);
+                            }
+                            DialogManager.okDialog().setTitle(GetText.tr("Error Logging In"))
+                                    .setContent(GetText.tr("Couldn't login with Ely.by account"))
+                                    .setType(DialogManager.ERROR).show();
+                            return;
+                        }
+                    }
+
+                    if (enableCommands && preLaunchCommand != null) {
+                        if (!executeCommand(preLaunchCommand)) {
+                            LogManager.error("Failed to execute pre-launch command");
+
+                            App.launcher.setMinecraftLaunched(false);
+
+                            if (App.launcher.getParent() != null) {
+                                App.launcher.getParent().setVisible(true);
+                            }
+
+                            return;
+                        }
+                    }
+
+                    process = MCLauncher.launch(elybyAccount, this, nativesTempDir,
                             LWJGLManager.shouldUseLegacyLWJGL(this) ? lwjglNativesTempDir : null,
                             wrapperCommand, username);
                 }

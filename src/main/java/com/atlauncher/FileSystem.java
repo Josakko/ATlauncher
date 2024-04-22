@@ -99,8 +99,19 @@ public final class FileSystem {
                 Files.createDirectory(FileSystem.LIBRARIES.resolve("launcher"));
             }
 
-            Files.copy(FileSystem.class.getResourceAsStream("/legacy-launch-jar"),
-                    legacyLaunchLibrariesJar, StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(FileSystem.class.getResourceAsStream("/legacy-launch-jar"), legacyLaunchLibrariesJar,
+            StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        Path authlibInjectorJar = FileSystem.LIBRARIES.resolve("launcher/authlib-injector.jar");
+
+        if (!Files.exists(authlibInjectorJar)) {
+            if (!Files.isDirectory(FileSystem.LIBRARIES.resolve("launcher"))) {
+                Files.createDirectory(FileSystem.LIBRARIES.resolve("launcher"));
+            }
+
+            Files.copy(FileSystem.class.getResourceAsStream("/authlib-injector-jar"), authlibInjectorJar,
+            StandardCopyOption.REPLACE_EXISTING);
         }
     }
 

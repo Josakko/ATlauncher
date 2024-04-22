@@ -34,6 +34,7 @@ import com.atlauncher.FileSystem;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.DisableableMod;
+import com.atlauncher.data.ElybyAccount;
 import com.atlauncher.data.Instance;
 import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
@@ -54,10 +55,6 @@ import com.google.gson.GsonBuilder;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.util.UUIDTypeAdapter;
 
-import io.reactivex.rxjava3.internal.util.ExceptionHelper;
-import jdk.internal.net.http.common.Log;
-import jnr.ffi.annotations.In;
-
 public class MCLauncher {
     public static final List<String> IGNORED_ARGUMENTS = new ArrayList<String>() {
         {
@@ -70,9 +67,8 @@ public class MCLauncher {
     };
 
     public static Process launch(MicrosoftAccount account, Instance instance, Path nativesTempDir,
-            Path lwjglNativesTempDir,
-            String wrapperCommand, String username) throws Exception {
-        return launch(account, instance, null, nativesTempDir.toFile(), lwjglNativesTempDir, wrapperCommand, username);
+            Path lwjglNativesTempDir, String wrapperCommand, String username) throws Exception {
+        return launch(account, instance, "[]", nativesTempDir.toFile(), lwjglNativesTempDir, wrapperCommand, username);
     }
 
     public static Process launch(MojangAccount account, Instance instance, LoginResponse response, Path nativesTempDir,
@@ -87,11 +83,17 @@ public class MCLauncher {
         return launch(account, instance, props, nativesTempDir.toFile(), lwjglNativesTempDir, wrapperCommand, username);
     }
 
-    public static Process launch(OfflineAccount account, Instance instance, LoginResponse response, Path nativesTempDir,
+    public static Process launch(OfflineAccount account, Instance instance, Path nativesTempDir,
             Path lwjglNativesTempDir, String wrapperCommand, String username) throws Exception {
-        
+
         return launch(account, instance, "[]", nativesTempDir.toFile(), lwjglNativesTempDir, wrapperCommand, username);
     }
+
+    public static Process launch(ElybyAccount account, Instance instance, Path nativesTempDir,
+            Path lwjglNativesTempDir, String wrapperCommand, String username) throws Exception {
+        return launch(account, instance, "[]", nativesTempDir.toFile(), lwjglNativesTempDir, wrapperCommand, username);
+    }
+
 
     private static Process launch(AbstractAccount account, Instance instance, String props, File nativesDir,
             Path lwjglNativesTempDir, String wrapperCommand, String username) throws Exception {
@@ -285,6 +287,19 @@ public class MCLauncher {
             path += "w";
         }
         arguments.add(path);
+
+        if (account instanceof ElybyAccount) {
+            Path authlibInjectorPath = FileSystem.LIBRARIES.resolve("launcher/authlib-injector.jar");
+            if (!Files.exists(authlibInjectorPath)) {
+                try {
+                    FileSystem.copyResourcesOutJar();
+                } catch (IOException e) {
+                    LogManager.logStackTrace("Failed to copy authlib-injector.jar to libraries directory", e);
+                }
+            }
+
+            arguments.add("-javaagent:" + authlibInjectorPath.toString() + "=" + Constants.ELYBY_API_URL);
+        }
 
         if (ConfigManager.getConfigItem("removeInitialMemoryOption", false) == false) {
             int initialMemory = Optional.ofNullable(instance.launcher.initialMemory).orElse(App.settings.initialMemory);
