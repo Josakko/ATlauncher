@@ -200,11 +200,6 @@ public class ElybyAccount extends AbstractAccount {
 
     @Override
     public String getSkinUrl() {
-        // TODO Auto-generated method stub
-        //throw new UnsupportedOperationException("Unimplemented method 'getSkinUrl'");
-
-        // just temp implementation
-
         return Constants.ELYBY_SKIN_TEXTURE_URL + this.minecraftUsername + ".png";
     }   
 }

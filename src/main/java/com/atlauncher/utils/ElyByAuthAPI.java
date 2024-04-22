@@ -6,7 +6,6 @@ import com.atlauncher.Gsons;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.elyby.OauthTokenResponse;
 import com.atlauncher.data.elyby.Profile;
-import com.atlauncher.data.elyby.Textures;
 import com.atlauncher.network.Download;
 
 import okhttp3.FormBody;
@@ -55,9 +54,5 @@ public class ElyByAuthAPI {
                 .header("Authorization", "Bearer " + accessToken).asClassWithThrow(Profile.class);
 
         return profile;
-    }
-
-    public static Textures getTextures(String username) {
-        return null;
     }
 }
