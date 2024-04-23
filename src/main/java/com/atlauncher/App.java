@@ -156,23 +156,6 @@ public class App {
     public static boolean skipTrayIntegration = false;
 
     /**
-     * This allows skipping the in built analytics collection. This is mainly useful
-     * for development when you don't want to report analytics. For end users, this
-     * can be turned off in the launcher setup or through the settings.
-     * <p/>
-     * --disable-analytics
-     */
-    // public static boolean disableAnalytics = true;
-
-    /**
-     * This allows skipping the in built error reporting. This is mainly useful for
-     * development when you don't want to report errors to an external third party.
-     * <p/>
-     * --disable-error-reporting
-     */
-    public static boolean disableErrorReporting = true;
-
-    /**
      * This is passed in by launch scripts on Linux to help the launcher know which
      * method was used to install the launcher (deb, rpm, aur or aur-bin)
      * <p/>
@@ -283,11 +266,6 @@ public class App {
                 LogManager.logStackTrace("Failed to disable D3D rendering", t);
             }
         }
-
-        // Initialize the error reporting unless disabled by command line
-        // if (!disableErrorReporting) {
-        //     ErrorReporting.enable();
-        // }
 
         // check the launcher has been 'installed' correctly
         checkInstalledCorrectly();
@@ -971,15 +949,11 @@ public class App {
                 .ofType(Boolean.class);
         // disabled 
         parser.accepts("skip-setup-dialog",
-                "If the first time setup dialog should be skipped, using the defaults. Note that this will enable analytics by default.")
+                "If the first time setup dialog should be skipped, using the defaults.")
                 .withOptionalArg().ofType(Boolean.class);
         parser.accepts("skip-tray-integration", "If the tray icon should not be enabled.").withOptionalArg()
                 .ofType(Boolean.class);
-        // disabled 
-        parser.accepts("disable-analytics", "If analytics should be disabled.").withOptionalArg().ofType(Boolean.class);
-        // disabled 
-        parser.accepts("disable-error-reporting", "If error reporting should be disabled.").withOptionalArg()
-                .ofType(Boolean.class);
+
         parser.accepts("install-method", "The method used to install the launcher.").withRequiredArg()
                 .ofType(String.class);
         parser.accepts("working-dir", "This forces the working directory for the launcher.").withRequiredArg()
@@ -1043,6 +1017,11 @@ public class App {
             LogManager.debugLevel = (Integer) options.valueOf("debug-level");
             LogManager.debug("Debug level has been set to " + options.valueOf("debug-level") + "!");
         }
+
+        // skipSetupDialog = options.has("skip-setup-dialog");
+        // if (skipSetupDialog) {
+        //     LogManager.debug("Skipping setup dialog!");
+        // }
 
         skipTrayIntegration = options.has("skip-tray-integration");
         if (skipTrayIntegration) {

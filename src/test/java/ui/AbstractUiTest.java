@@ -80,7 +80,7 @@ public class AbstractUiTest extends AssertJSwingTestCaseTemplate {
 
         // start the application
         ApplicationLauncher.application(App.class)
-                .withArgs("--skip-setup-dialog", "--disable-analytics", "--disable-error-reporting",
+                .withArgs("--skip-setup-dialog",
                         "--skip-tray-integration", "--no-launcher-update", "--proxy-type=SOCKS",
                         "--proxy-host=127.0.0.1", "--proxy-port=" + mockServer.getPort(),
                         "--working-dir=" + workingDir.toString())

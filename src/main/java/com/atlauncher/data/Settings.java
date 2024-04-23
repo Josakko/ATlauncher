@@ -122,7 +122,7 @@ public class Settings {
     // Logging
     public String forgeLoggingLevel = "INFO";
     public boolean enableLogs = true;
-    public boolean enableAnalytics = true;
+    public boolean enableAnalytics = false;
     public String analyticsClientId = UUID.randomUUID().toString();
 
     // Backups

@@ -117,7 +117,6 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.managers.MinecraftManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.network.DownloadPool;
-import com.atlauncher.network.ErrorReporting;
 import com.atlauncher.network.GraphqlClient;
 import com.atlauncher.utils.ArchiveUtils;
 import com.atlauncher.utils.CurseForgeApi;
@@ -236,7 +235,6 @@ public class InstanceInstaller extends SwingWorker<Boolean, Void> implements Net
 
     @Override
     protected Boolean doInBackground() throws Exception {
-        ErrorReporting.recordPackInstall(this.pack.name, this.version.version, this.loaderVersion);
         LogManager.info("Started install of " + this.pack.name + " version " + this.version.version);
 
         if (this.loaderVersion != null) {
