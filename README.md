@@ -12,21 +12,13 @@ modpacks easily and quickly.
 
 Since this is not official ATlauncher repo any issues with this repo should **not** be reported to their discord server or github, so if you need any help with this repo my [discord server](https://discord.gg/xgET5epJE6).
 
-## Links
+## Links (from the official project repo)
 
 -   [ATLauncher Website](https://atlauncher.com)
 -   [ATLauncher Discord](https://atl.pw/discord)
 -   [ATLauncher Facebook](https://www.facebook.com/ATLauncher)
 -   [ATLauncher Reddit](https://www.reddit.com/r/ATLauncher)
 -   [ATLauncher Twitter](https://twitter.com/ATLauncher)
-
-## Contributing to ATLauncher
-
-Take a look at [CONTRIBUTING.md](CONTRIBUTING.md)
-
-## Testing
-
-Please see the [TESTING.md](TESTING.md) file for information on how we write tests.
 
 ## Prerequisites
 
@@ -95,23 +87,6 @@ When new GraphQL queries/mutations are added into the `src/main/graphql` directo
 ```
 
 This will fetch the latest schema and then codegen the java files so you can use the query/mutation.
-
-## Updating license headers in all files
-
-If you add new files, or update the `LICENSEHEADER` file, you can add that to all source files by running:
-
-```sh
-./gradlew updateLicenses
-```
-
-To check that they're all correct, you can run the below command:
-
-```sh
-./gradlew checkLicenses
-```
-
-This is run during the CI process, and will fail if the license is missing or not up to date, so make sure that you add
-this to all new files you create.
 
 ## Create Custom Themes
 
