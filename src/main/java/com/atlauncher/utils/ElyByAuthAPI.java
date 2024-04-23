@@ -28,27 +28,6 @@ public class ElyByAuthAPI {
         return oauthTokenResponse;
     }
 
-    public static OauthTokenResponse refreshAccessToken(String refreshToken) {
-        // ely docs is shit, literally their docs say different from what their server does, luckily its open source 
-        // https://github.com/elyby/accounts/blob/master/api/modules/oauth/models/OauthProcess.php#L136#L201
-        // ops, it looks like the access tokens now last forever so this is not needed 
-        RequestBody data = new FormBody.Builder()
-                .add("client_id", Constants.ELYBY_LOGIN_CLIENT_ID)
-                .add("client_secret", Constants.ELYBY_LOGIN_SECRET_KEY)
-                //.add("scope", String.join(" ", Constants.ELYBY_LOGIN_SCOPES))
-                .add("refresh_token", refreshToken)
-                .add("grant_type", "refresh_token").build();
-
-        OauthTokenResponse oauthTokenResponse = Download.build()
-                .setUrl(Constants.ELYBY_REFRESH_TOKEN_URL)
-                .header("Content-Type", "application/x-www-form-urlencoded")
-                .post(data)
-        .asClass(OauthTokenResponse.class, Gsons.DEFAULT);
-
-        oauthTokenResponse.refreshToken = refreshToken;
-        return oauthTokenResponse;
-    }
-
     public static Profile getProfile(String accessToken) throws IOException {
         Profile profile = Download.build().setUrl(Constants.ELYBY_TOKEN_INFO_URL)
                 .header("Authorization", "Bearer " + accessToken).asClassWithThrow(Profile.class);

@@ -1,13 +1,11 @@
 package com.atlauncher.data;
 
-import java.util.Date;
 import java.util.Optional;
 
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.data.elyby.Profile;
 import com.atlauncher.gui.dialogs.LoginWithElyByDialog;
-import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.ElyByAuthAPI;
@@ -26,11 +24,6 @@ public class ElybyAccount extends AbstractAccount {
     public OauthTokenResponse oauthToken;
 
     /**
-     * The date that the accessToken expires at.
-     */
-    public Date accessTokenExpiresAt;
-
-    /**
      * If the user must login again. This is usually the result of a failed
      * accessToken refresh.
      */
@@ -47,9 +40,6 @@ public class ElybyAccount extends AbstractAccount {
         this.uuid = profile.uuid;
         this.username = profile.username;
         this.mustLogin = false;
-
-        this.accessTokenExpiresAt = new Date();
-        this.accessTokenExpiresAt.setTime(this.accessTokenExpiresAt.getTime() + (oauthTokenResponse.expiresIn * 1000));
     }
 
     @Override
@@ -60,40 +50,6 @@ public class ElybyAccount extends AbstractAccount {
     @Override
     public String getSessionToken() {
         return accessToken;
-    }
-
-    public boolean refreshAccessToken() {
-        return refreshAccessToken(false);
-    }
-
-    public boolean refreshAccessToken(Boolean force) {
-        try {
-            if (force || new Date().after(this.accessTokenExpiresAt)) {
-                LogManager.info("Access token expired. Attempting to refresh");
-                OauthTokenResponse oauthTokenResponse = ElyByAuthAPI.refreshAccessToken(oauthToken.refreshToken);
-
-                if (oauthTokenResponse == null) {
-                    mustLogin = true;
-                    AccountManager.saveAccounts();
-                    LogManager.error("Failed to refresh accessToken");
-                    return false;
-                }
-
-                this.oauthToken = oauthTokenResponse;
-                this.accessTokenExpiresAt = new Date();
-                this.accessTokenExpiresAt.setTime(this.accessTokenExpiresAt.getTime() + (oauthTokenResponse.expiresIn * 1000));
-
-                AccountManager.saveAccounts();
-            }
-        } catch (Exception e) {
-            mustLogin = true;
-            AccountManager.saveAccounts();
-
-            LogManager.logStackTrace("Exception refreshing accessToken", e);
-            return false;
-        }
-
-        return true;
     }
 
     @Override
@@ -127,12 +83,10 @@ public class ElybyAccount extends AbstractAccount {
 
     @Override
     public void updateSkinPreCheck() {
-        this.refreshAccessToken();
     }
 
     @Override
     public void changeSkinPreCheck() {
-        this.refreshAccessToken();
     }
 
     public boolean updateProfile(String accessToken) {
@@ -180,23 +134,7 @@ public class ElybyAccount extends AbstractAccount {
     }
 
     public boolean ensureAccessTokenValid() {
-        if (!ensureAccountIsLoggedIn()) {
-            return false;
-        }
-
-        if (!new Date().after(accessTokenExpiresAt)) {
-            return true;
-        }
-
-        LogManager.info("Access Token has expired. Attempting to refresh it.");
-
-        try {
-            return refreshAccessToken();
-        } catch (Exception e) {
-            LogManager.logStackTrace("Exception while attempting to refresh access token", e);
-        }
-
-        return false;
+        return ensureAccountIsLoggedIn();
     }
 
     @Override
