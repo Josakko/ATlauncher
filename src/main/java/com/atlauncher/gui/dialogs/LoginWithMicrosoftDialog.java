@@ -39,6 +39,7 @@ import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.microsoft.Entitlements;
 import com.atlauncher.data.microsoft.LoginResponse;
@@ -170,11 +171,16 @@ public final class LoginWithMicrosoftDialog extends JDialog {
     private void addAccount(OauthTokenResponse oauthTokenResponse, XboxLiveAuthResponse xstsAuthResponse,
             LoginResponse loginResponse, Profile profile) throws Exception {
         if (account != null || AccountManager.isAccountByName(loginResponse.username)) {
-            MicrosoftAccount account = (MicrosoftAccount) AccountManager.getAccountByName(loginResponse.username);
-
-            if (account == null) {
-                return;
+            AbstractAccount abstractAccount = AccountManager.getAccountByName(loginResponse.username);
+            if (!(abstractAccount instanceof MicrosoftAccount)) {
+                DialogManager.okDialog().setTitle(GetText.tr("Account Not Added"))
+                        .setContent(
+                                GetText.tr("Account with this username already exists, please remove that before adding this one."))
+                        .setType(DialogManager.ERROR).show();
+                return;          
             }
+
+            MicrosoftAccount account = (MicrosoftAccount) abstractAccount;
 
             // if forced to relogin, then make sure they logged into correct account
             if (account != null && this.account != null && !account.username.equals(this.account.username)) {

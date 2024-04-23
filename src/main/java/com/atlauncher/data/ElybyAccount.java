@@ -150,6 +150,7 @@ public class ElybyAccount extends AbstractAccount {
             return false;
         }
 
+        this.username = profile.username;
         this.minecraftUsername = profile.username;
         this.uuid = profile.uuid;
 

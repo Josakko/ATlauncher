@@ -20,6 +20,7 @@ import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
 import com.atlauncher.constants.Constants;
+import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.ElybyAccount;
 import com.atlauncher.data.elyby.OauthTokenResponse;
 import com.atlauncher.data.elyby.Profile;
@@ -146,11 +147,16 @@ public class LoginWithElyByDialog extends JDialog {
 
     private void addAccount(OauthTokenResponse oauthTokenResponse, Profile profile) throws Exception {
         if (account != null || AccountManager.isAccountByName(profile.username)) {
-            ElybyAccount account = (ElybyAccount) AccountManager.getAccountByName(profile.username);
-
-            if (account == null) {
-                return;
+            AbstractAccount abstractAccount = AccountManager.getAccountByName(profile.username);
+            if (!(abstractAccount instanceof ElybyAccount)) {
+                DialogManager.okDialog().setTitle(GetText.tr("Account Not Added"))
+                        .setContent(
+                                GetText.tr("Account with this username already exists, please remove that before adding this one."))
+                        .setType(DialogManager.ERROR).show();
+                return;          
             }
+
+            ElybyAccount account = (ElybyAccount) abstractAccount;
 
             // if forced to relogin, then make sure they logged into correct account
             if (this.account != null && !account.username.equals(this.account.username)) {
