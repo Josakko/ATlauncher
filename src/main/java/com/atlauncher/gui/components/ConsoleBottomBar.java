@@ -48,10 +48,12 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
     private final JButton copyLogButton = new JButton(GetText.tr("Copy Log"));
     private final JButton uploadLogButton = new JButton(GetText.tr("Upload Log"));
     private final JButton killMinecraftButton = new JButton(GetText.tr("Kill Minecraft"));
+    private final JButton killATlauncherButton = new JButton(GetText.tr("Kill ATlauncher"));
 
     public ConsoleBottomBar() {
         this.addActionListeners(); // Setup Action Listeners
 
+        leftSide.add(this.killATlauncherButton);
         leftSide.add(this.clearButton);
         leftSide.add(this.copyLogButton);
         leftSide.add(this.uploadLogButton);
@@ -82,6 +84,18 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
      * Sets up the action listeners on the buttons
      */
     private void addActionListeners() {
+        killATlauncherButton.addActionListener(e -> {
+            int ret = DialogManager.yesNoDialog().setTitle(GetText.tr("Kill ATlauncher") + "?")
+                    .setContent(new HTMLBuilder().center().text(GetText.tr(
+                            "Are you sure you want to kill ATlauncher process?"))
+                            .build())
+                    .setType(DialogManager.QUESTION).show();
+            if (ret == DialogManager.YES_OPTION) {
+                LogManager.warn("Killing ATlauncher");
+                System.exit(1);
+            }
+        });
+
         clearButton.addActionListener(e -> {
             App.console.clearConsole();
             LogManager.info("Console Cleared");
