@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,9 +42,11 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.data.DownloadableFile;
 import com.atlauncher.data.LauncherVersion;
-import com.atlauncher.graphql.AddLauncherLaunchMutation;
-import com.atlauncher.graphql.type.AddLauncherLaunchInput;
-import com.atlauncher.graphql.type.LauncherJavaVersionInput;
+import com.atlauncher.data.github.GitHubRelease;
+import com.atlauncher.data.github.GitHubReleaseAsset;
+// import com.atlauncher.graphql.AddLauncherLaunchMutation;
+// import com.atlauncher.graphql.type.AddLauncherLaunchInput;
+// import com.atlauncher.graphql.type.LauncherJavaVersionInput;
 import com.atlauncher.gui.dialogs.ProgressDialog;
 import com.atlauncher.gui.tabs.PacksBrowserTab;
 import com.atlauncher.gui.tabs.news.NewsTab;
@@ -63,7 +65,7 @@ import com.atlauncher.managers.PerformanceManager;
 import com.atlauncher.managers.ServerManager;
 import com.atlauncher.managers.TechnicModpackUpdateManager;
 import com.atlauncher.network.DownloadPool;
-import com.atlauncher.network.GraphqlClient;
+import com.atlauncher.network.Download;
 import com.atlauncher.utils.Java;
 import com.atlauncher.utils.OS;
 import com.google.gson.JsonIOException;
@@ -75,6 +77,7 @@ import okhttp3.OkHttpClient;
 
 public class Launcher {
     // Holding update data
+    private GitHubRelease gitHubRelease;
     private LauncherVersion latestLauncherVersion; // Latest Launcher version
     private List<DownloadableFile> launcherFiles; // Files the Launcher needs to download
 
@@ -92,12 +95,13 @@ public class Launcher {
 
     public void loadEverything() {
         PerformanceManager.start();
-        hasUpdatedFiles();
+        // check and update news, mc versions and other json, images etc
         if (hasUpdatedFiles()) {
             downloadUpdatedFiles(); // Downloads updated files on the server
         }
 
-        // checkForLauncherUpdate();
+        // update the launcher itself 
+        checkForLauncherUpdate();
 
         ConfigManager.loadConfig(); // Load the config
 
@@ -141,12 +145,38 @@ public class Launcher {
     }
 
     public boolean launcherHasUpdate() {
+        Path releasesJson = FileSystem.JSON.resolve("releases.json");
+
+        try {
+            Download.build().setUrl(Constants.GITHUB_RELEASES_URL).downloadTo(releasesJson).downloadFile();
+        } catch (IOException e) {
+            LogManager.logStackTrace("Failed to download latest releases: ", e);
+        }
+
         try (InputStreamReader fileReader = new InputStreamReader(
-                new FileInputStream(FileSystem.JSON.resolve("version.json").toFile()), StandardCharsets.UTF_8)) {
-            this.latestLauncherVersion = Gsons.DEFAULT.fromJson(fileReader, LauncherVersion.class);
+                new FileInputStream(FileSystem.JSON.resolve("releases.json").toFile()), StandardCharsets.UTF_8)
+                ) {
+            this.gitHubRelease = Gsons.DEFAULT.fromJson(fileReader, GitHubRelease.class);
+            this.latestLauncherVersion = new LauncherVersion(this.gitHubRelease.tagName);
         } catch (JsonSyntaxException | JsonIOException | IOException e) {
             LogManager.logStackTrace("Exception when loading latest launcher version!", e);
         }
+
+
+        System.out.println(
+            this.gitHubRelease.tagName + "\n" +
+            this.gitHubRelease.htmlUrl + "\n" +
+            this.gitHubRelease.url + "\n" +
+            this.gitHubRelease.assets.get(0).name
+        );
+
+        System.out.println(
+            String.valueOf(this.latestLauncherVersion.getReserved()) + "." +
+            String.valueOf(this.latestLauncherVersion.getMajor()) + "." +
+            String.valueOf(this.latestLauncherVersion.getMinor()) + "." +
+            String.valueOf(this.latestLauncherVersion.getRevision()) + "." +
+            String.valueOf(this.latestLauncherVersion.getStream())
+        );
 
         return this.latestLauncherVersion != null && Constants.VERSION.needsUpdate(this.latestLauncherVersion);
     }
@@ -156,13 +186,29 @@ public class Launcher {
             File thisFile = new File(Update.class.getProtectionDomain().getCodeSource().getLocation().getPath());
             String path = thisFile.getCanonicalPath();
             path = URLDecoder.decode(path, "UTF-8");
-            String toget;
+            String toGet;
             String saveAs = thisFile.getName();
             if (path.contains(".exe")) {
-                toget = "exe";
+                toGet = "exe";
             } else {
-                toget = "jar";
+                toGet = "jar";
             }
+
+            String url_ = null;
+            for (int i = 0; i < this.gitHubRelease.assets.size(); i++) {
+                GitHubReleaseAsset githubReleaseAsset = this.gitHubRelease.assets.get(i);
+                if (githubReleaseAsset.name.contains(toGet) && !githubReleaseAsset.name.contains("installer")) {
+                    url_ = githubReleaseAsset.downloadUrl;
+                    break;
+                }
+            }
+            if (url_ == null) {
+                LogManager.error("Could not find release to download");
+                return;
+            }
+            // this is little trashy
+            String url = url_;
+
             File newFile = FileSystem.TEMP.resolve(saveAs).toFile();
             LogManager.info("Downloading Launcher Update");
 
@@ -170,7 +216,7 @@ public class Launcher {
                     GetText.tr("Downloading Launcher Update"));
             progressDialog.addThread(new Thread(() -> {
                 com.atlauncher.network.Download download = com.atlauncher.network.Download.build()
-                        .setUrl(String.format("%s/%s.%s", Constants.DOWNLOAD_SERVER, Constants.LAUNCHER_NAME, toget))
+                        .setUrl(url)
                         .withHttpClient(Network.createProgressClient(progressDialog)).downloadTo(newFile.toPath());
 
                 progressDialog.setTotalBytes(download.getFilesize());
@@ -344,11 +390,12 @@ public class Launcher {
         dialog.setResizable(false);
         dialog.add(new JLabel(GetText.tr("Updating Launcher. Please Wait")));
         App.TASKPOOL.execute(() -> {
-            hasUpdatedFiles();
+            // check and update news, mc versions and other json, images etc
             if (hasUpdatedFiles()) {
                 downloadUpdatedFiles(); // Downloads updated files on the server
             }
-            // checkForLauncherUpdate();
+            // update the launcher itself
+            checkForLauncherUpdate();
             checkForExternalPackUpdates();
 
             ConfigManager.loadConfig(); // Load the config
@@ -364,42 +411,42 @@ public class Launcher {
         dialog.setVisible(true);
     }
 
-//    private void checkForLauncherUpdate() {
-//        PerformanceManager.start();
-//
-//        LogManager.debug("Checking for launcher update");
-//        if (launcherHasUpdate()) {
-//            if (App.noLauncherUpdate) {
-//                int ret = DialogManager.okDialog().setTitle("Launcher Update Available")
-//                        .setContent(new HTMLBuilder().center().split(80).text(GetText.tr(
-//                                "An update to the launcher is available. Please update via your package manager or manually by visiting https://atlauncher.com/downloads to get the latest features and bug fixes."))
-//                                .build())
-//                        .addOption(GetText.tr("Visit Downloads Page")).setType(DialogManager.INFO).show();
-//
-//                if (ret == 1) {
-//                    OS.openWebBrowser("https://atlauncher.com/downloads");
-//                }
-//
-//                return;
-//            }
-//
-//            if (!App.wasUpdated) {
-//                downloadUpdate(); // Update the Launcher
-//            } else {
-//                DialogManager.okDialog().setTitle("Update Failed!")
-//                        .setContent(new HTMLBuilder().center()
-//                                .text(GetText.tr("Update failed. Please click Ok to close "
-//                                        + "the launcher and open up the downloads page.<br/><br/>Download "
-//                                        + "the update and replace the old exe/jar file."))
-//                                .build())
-//                        .setType(DialogManager.ERROR).show();
-//                OS.openWebBrowser("https://atlauncher.com/downloads");
-//                System.exit(0);
-//            }
-//        }
-//        LogManager.debug("Finished checking for launcher update");
-//        PerformanceManager.end();
-//    }
+    private void checkForLauncherUpdate() {
+        PerformanceManager.start();
+
+        LogManager.debug("Checking for launcher update");
+        if (launcherHasUpdate()) {
+            if (App.noLauncherUpdate) {
+                int ret = DialogManager.okDialog().setTitle("Launcher Update Available")
+                        .setContent(new HTMLBuilder().center().split(80).text(GetText.tr(
+                                "An update to the launcher is available. Please update via your package manager or manually by visiting https://atlauncher.com/downloads to get the latest features and bug fixes."))
+                                .build())
+                        .addOption(GetText.tr("Visit Downloads Page")).setType(DialogManager.INFO).show();
+
+                if (ret == 1) {
+                    OS.openWebBrowser("https://atlauncher.com/downloads");
+                }
+
+                return;
+            }
+
+            if (!App.wasUpdated) {
+                downloadUpdate(); // Update the Launcher
+            } else {
+                DialogManager.okDialog().setTitle("Update Failed!")
+                        .setContent(new HTMLBuilder().center()
+                                .text(GetText.tr("Update failed. Please click Ok to close "
+                                        + "the launcher and open up the downloads page.<br/><br/>Download "
+                                        + "the update and replace the old exe/jar file."))
+                                .build())
+                        .setType(DialogManager.ERROR).show();
+                OS.openWebBrowser("https://atlauncher.com/downloads");
+                System.exit(0);
+            }
+        }
+        LogManager.debug("Finished checking for launcher update");
+        PerformanceManager.end();
+    }
 
     /**
      * Sets the main parent JFrame reference for the Launcher

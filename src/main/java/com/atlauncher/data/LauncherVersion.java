@@ -21,6 +21,7 @@ import java.util.Locale;
 
 import com.atlauncher.annot.Json;
 import com.atlauncher.utils.Hashing;
+import com.atlauncher.utils.Utils;
 import com.google.common.hash.HashCode;
 
 @Json
@@ -31,6 +32,17 @@ public class LauncherVersion {
     private final int revision;
     private final String stream;
     private final HashCode sha1Revision;
+
+    public LauncherVersion(String tagName) {
+        String[] versionSegments = Utils.versionParser(tagName);
+
+        this.reserved = Integer.parseInt(versionSegments[0]); 
+        this.major = Integer.parseInt(versionSegments[1]); 
+        this.minor = Integer.parseInt(versionSegments[2]);
+        this.revision = Integer.parseInt(versionSegments[3]);
+        this.stream = Utils.versionParserGetStream(versionSegments);
+        this.sha1Revision = Hashing.EMPTY_HASH_CODE;
+    }
 
     public LauncherVersion(int reserved, int major, int minor, int revision) {
         this(reserved, major, minor, revision, "Release", Hashing.EMPTY_HASH_CODE);

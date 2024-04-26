@@ -185,7 +185,7 @@ public class App {
      * <p/>
      * --no-launcher-update
      */
-    // public static boolean noLauncherUpdate = true;
+    public static boolean noLauncherUpdate = false;
 
     /**
      * This will tell the launcher to not show the console. You can open the console
@@ -1063,10 +1063,10 @@ public class App {
             LogManager.warn("Allowing all ssl certs. This is insecure and should only be used for development.");
         }
 
-        // noLauncherUpdate = options.has("no-launcher-update");
-        // if (noLauncherUpdate) {
-        //     LogManager.debug("Not updating the launcher!");
-        // }
+        noLauncherUpdate = options.has("no-launcher-update");
+        if (noLauncherUpdate) {
+            LogManager.debug("Not updating the launcher!");
+        }
 
         noConsole = options.has("no-console");
         if (noConsole) {

@@ -1680,4 +1680,17 @@ public class Utils {
     public static boolean isEntryValid(String entry) {
         return !(entry == null || entry.isBlank());
     }
+
+    public static String[] versionParser(String version) {
+        return version.trim().replace("v", "").split("\\.", 5);
+    }
+
+    public static String versionParserGetStream(String[] version) {
+        String stream = "Release";
+        if (version.length > 4 && version[4].endsWith("Beta")) {
+            stream = "Beta";
+        }
+
+        return stream;
+    }
 }

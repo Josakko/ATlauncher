@@ -55,6 +55,14 @@ public class Constants {
     public static final String CROWDIN_URL = "https://crowdin.com/project/atlauncher";
     public static final String SENTRY_DSN = "https://499c3bbc55cb434dad42a3ac670e2c91@sentry.io/1498519";
 
+    // github repo
+    public static final String GITHUB_PROTOCOL = "https://";
+    public static final String GITHUB_DOMAIN = "github.com/";
+    public static final String GITHUB_REPO = "Josakko/ATlauncher";
+    public static final String GITHUB_REPO_URL = GITHUB_PROTOCOL + GITHUB_DOMAIN + GITHUB_REPO;
+    public static final String GITHUB_RELEASES_URL = GITHUB_PROTOCOL + "api." + GITHUB_DOMAIN + "repos/" + GITHUB_REPO
+                    + "/releases/latest";
+
     // Launcher domains, endpoints, etc
     public static String BASE_LAUNCHER_PROTOCOL = "https://";
     public static String BASE_LAUNCHER_DOMAIN = "atlauncher.com";
