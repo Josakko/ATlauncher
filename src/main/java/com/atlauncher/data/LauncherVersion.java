@@ -34,6 +34,10 @@ public class LauncherVersion {
     private final HashCode sha1Revision;
 
     public LauncherVersion(String tagName) {
+        this(tagName, Hashing.EMPTY_HASH_CODE);
+    }
+
+    public LauncherVersion(String tagName, HashCode hashCode) {
         String[] versionSegments = Utils.versionParser(tagName);
 
         this.reserved = Integer.parseInt(versionSegments[0]); 
@@ -41,7 +45,7 @@ public class LauncherVersion {
         this.minor = Integer.parseInt(versionSegments[2]);
         this.revision = Integer.parseInt(versionSegments[3]);
         this.stream = Utils.versionParserGetStream(versionSegments);
-        this.sha1Revision = Hashing.EMPTY_HASH_CODE;
+        this.sha1Revision = hashCode;
     }
 
     public LauncherVersion(int reserved, int major, int minor, int revision) {

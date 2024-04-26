@@ -31,18 +31,8 @@ public class Constants {
         String versionFromFile = new BufferedReader(
                 new InputStreamReader(App.class.getResourceAsStream("/version"), StandardCharsets.UTF_8)).lines()
                 .collect(Collectors.joining("")).trim();
-        String[] versionParts = versionFromFile.split("\\.", 4);
 
-        String stream = "Release";
-
-        if (versionParts[3].endsWith(".Beta")) {
-            versionParts[3] = versionParts[3].replace(".Beta", "");
-            stream = "Beta";
-        }
-
-        VERSION = new LauncherVersion(Integer.parseInt(versionParts[0]), Integer.parseInt(versionParts[1]),
-                Integer.parseInt(versionParts[2]), Integer.parseInt(versionParts[3]), stream,
-                OS.getRunningProgramHashCode());
+        VERSION = new LauncherVersion(versionFromFile, OS.getRunningProgramHashCode());
     }
 
     // Launcher config

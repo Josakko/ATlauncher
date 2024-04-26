@@ -162,22 +162,6 @@ public class Launcher {
             LogManager.logStackTrace("Exception when loading latest launcher version!", e);
         }
 
-
-        System.out.println(
-            this.gitHubRelease.tagName + "\n" +
-            this.gitHubRelease.htmlUrl + "\n" +
-            this.gitHubRelease.url + "\n" +
-            this.gitHubRelease.assets.get(0).name
-        );
-
-        System.out.println(
-            String.valueOf(this.latestLauncherVersion.getReserved()) + "." +
-            String.valueOf(this.latestLauncherVersion.getMajor()) + "." +
-            String.valueOf(this.latestLauncherVersion.getMinor()) + "." +
-            String.valueOf(this.latestLauncherVersion.getRevision()) + "." +
-            String.valueOf(this.latestLauncherVersion.getStream())
-        );
-
         return this.latestLauncherVersion != null && Constants.VERSION.needsUpdate(this.latestLauncherVersion);
     }
 
