@@ -87,8 +87,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private JButton loginWithMicrosoftButton;
     private JMenuItem refreshAccessTokenMenuItem;
     private JButton loginWithElyByButton;
-    private final JMenuItem updateSkin;
     private final JMenuItem changeSkin;
+    private final JMenuItem updateSkin;
+    private final JMenuItem updateUsername;
     private final JPopupMenu contextMenu; // Right click menu
 
 
@@ -328,7 +329,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         });
         contextMenu.add(updateSkin);
 
-        JMenuItem updateUsername = new JMenuItem(GetText.tr("Update Username"));
+        updateUsername = new JMenuItem(GetText.tr("Update Username"));
         updateUsername.addActionListener(e -> viewModel.updateUsername());
         contextMenu.add(updateUsername);
 
@@ -443,6 +444,10 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 refreshAccessTokenMenuItem.setVisible(account instanceof MicrosoftAccount);
 
                 loginWithElyByButton.setVisible(account instanceof ElybyAccount);
+
+                changeSkin.setEnabled(!((account instanceof ElybyAccount) || (account instanceof OfflineAccount)));
+                updateSkin.setEnabled(!(account instanceof OfflineAccount));
+                updateUsername.setEnabled(!(account instanceof OfflineAccount));
 
                 if (account instanceof MojangAccount) {
                     MojangAccount mojangAccount = (MojangAccount) account;
