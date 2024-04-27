@@ -155,6 +155,8 @@ You can apply for a CurseForge Core key through
 [this link](https://forms.monday.com/forms/dce5ccb7afda9a1c21dab1a1aa1d84eb) and a Microsoft Login Client ID through
 [this link](https://learn.microsoft.com/en-us/azure/active-directory/develop/quickstart-register-app).
 
+To set your own discord rich presence first create your [discord application](https://discord.com/developers/applications) and replace the ID in the already mentioned file constants file and also if you want to have the icon in the RPC then on the portal page upload the desired image and name it `launcher_icon`.
+
 ## Versioning System
 
 Starting with version 3.2.1.0 a new versioning system was put into place. It works off the following:

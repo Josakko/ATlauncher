@@ -1158,9 +1158,9 @@ public class Instance extends MinecraftVersion {
 
                         if (this.getPack() != null && this.getPack().hasDiscordImage()) {
                             presence.setBigImage(this.getPack().getSafeName().toLowerCase(Locale.ENGLISH), playing);
-                            presence.setSmallImage("atlauncher", "ATLauncher");
+                            presence.setSmallImage("launcher_icon", "JKlauncher");
                         } else {
-                            presence.setBigImage("atlauncher", playing);
+                            presence.setBigImage("launcher_icon", playing);
                         }
 
                         DiscordRPC.discordUpdatePresence(presence.build());
