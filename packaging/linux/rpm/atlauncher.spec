@@ -4,7 +4,7 @@ Release:        1%{?dist}
 Summary:        A launcher for Minecraft which integrates multiple different modpacks to allow you to download and install modpacks easily and quickly.
 
 License:        GPLv3
-URL:            https://atlauncher.com
+URL:            https://github.com/Josakko/ATlauncher
 
 BuildArch:      noarch
 

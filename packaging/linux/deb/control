@@ -5,6 +5,6 @@ Priority: optional
 Architecture: all
 Depends: java17-runtime | java-17-runtime, wget, desktop-file-utils
 Installed-Size: 2220
-Maintainer: Ryan Dowling <ryan.dowling@atlauncher.com>
+Maintainer: Josakko <josakko@protonmail.com>
 Description: A launcher for Minecraft which integrates multiple different modpacks to allow you to download and install modpacks easily and quickly.
-Homepage: https://atlauncher.com
+Homepage: https://github.com/Josakko/ATlauncher

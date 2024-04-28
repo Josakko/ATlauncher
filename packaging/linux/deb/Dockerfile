@@ -1,5 +1,5 @@
 FROM debian:11
-LABEL maintainer="ryan.dowling@atlauncher.com"
+LABEL maintainer="josakko@protonmail.com"
 
 # add in all the files
 ADD deb/control /work/atlauncher/DEBIAN/control

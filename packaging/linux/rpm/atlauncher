@@ -10,7 +10,7 @@ fi
 cd $INSTDIR
 
 if [[ ! -f ${INSTDIR}/ATLauncher.jar ]]; then
-    wget "https://download.nodecdn.net/containers/atl/ATLauncher.jar" 2>&1
+    echo "Please reinstall ATlauncher because it was not found on your system." && exit
 fi
 
 exec java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -jar ATLauncher.jar --install-method=rpm "$@"

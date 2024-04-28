@@ -10,14 +10,14 @@ pkgver=3.4.36.1
 pkgdesc="A launcher for Minecraft which integrates multiple different modpacks to allow you to download and install
 modpacks easily and quickly."
 arch=('any')
-url="https://github.com/ATLauncher/ATLauncher"
+url="https://github.com/Josakko/ATlauncher"
 license=('GPL3')
 depends=('java-runtime>=17' 'openal')
 makedepends=('jdk17-openjdk')
 provides=('atlauncher')
 conflicts=('atlauncher-bin')
 
-source=("$_upstreamname-$pkgver.tar.gz::https://github.com/ATLauncher/ATLauncher/archive/v$pkgver.tar.gz"
+source=("$_upstreamname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz"
     "atlauncher"
     "atlauncher.desktop"
     "atlauncher.png"
