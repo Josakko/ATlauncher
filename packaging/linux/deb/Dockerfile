@@ -5,6 +5,7 @@ LABEL maintainer="josakko@protonmail.com"
 ADD deb/control /work/atlauncher/DEBIAN/control
 ADD deb/postrm /work/atlauncher/DEBIAN/postrm
 ADD deb/atlauncher /work/atlauncher/usr/bin/atlauncher
+ADD ../../bin/ATLauncher.jar /work/atlauncher/usr/share/atlauncher-inst/ATLauncher.jar
 ADD _common/atlauncher.desktop /work/atlauncher/usr/share/applications/atlauncher.desktop
 ADD _common/atlauncher.metainfo.xml /work/atlauncher/usr/share/metainfo/atlauncher.metainfo.xml
 ADD _common/atlauncher.png /work/atlauncher/usr/share/pixmaps/atlauncher.png

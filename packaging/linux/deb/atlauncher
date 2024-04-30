@@ -10,7 +10,7 @@ fi
 cd $INSTDIR
 
 if [[ ! -f ${INSTDIR}/ATLauncher.jar ]]; then
-    echo "Please reinstall ATlauncher because it was not found on your system." && exit
+    cp /usr/share/atlauncher-inst/ATLauncher.jar ./
 fi
 
 exec java -Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -jar ATLauncher.jar --install-method=deb "$@"
