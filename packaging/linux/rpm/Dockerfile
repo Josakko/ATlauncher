@@ -7,6 +7,7 @@ RUN dnf install -y rpmdevtools libappstream-glib desktop-file-utils \
     && rm -rf /var/cache/dnf
 
 # add in all the files
+ADD ../bin/ATLauncher.jar /work/ATLauncher.jar
 ADD rpm/atlauncher.spec /work/atlauncher.spec
 ADD rpm/atlauncher /work/atlauncher
 ADD _common/atlauncher.desktop /work/atlauncher.desktop

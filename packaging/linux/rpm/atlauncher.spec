@@ -32,6 +32,9 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/atlauncher.desktop
 mkdir -p %{buildroot}/usr/bin
 install -m 0755 atlauncher %{buildroot}/usr/bin/atlauncher
 
+mkdir -p %{buildroot}/usr/share/atlauncher-inst
+install -m 0644 ATLauncher.jar %{buildroot}/usr/share/atlauncher-inst/ATLauncher.jar
+
 mkdir -p %{buildroot}/usr/share/pixmaps
 install -m 0644 atlauncher.png %{buildroot}/usr/share/pixmaps/atlauncher.png
 
@@ -46,6 +49,7 @@ install -m 0644 atlauncher.metainfo.xml %{buildroot}/%{_metainfodir}/atlauncher.
 
 %files
 /usr/bin/atlauncher
+/usr/share/atlauncher-inst/ATLauncher.jar
 /usr/share/pixmaps/atlauncher.png
 /usr/share/icons/hicolor/scalable/apps/atlauncher.svg
 %{_datadir}/applications/atlauncher.desktop
