@@ -286,7 +286,6 @@ public class Launcher {
                 .map(DownloadableFile::getDownload).collect(Collectors.toList());
     }
 
-    // currently not used
     public void downloadUpdatedFiles() {
         ProgressDialog progressDialog = new ProgressDialog(GetText.tr("Downloading Updates"), 1,
                 GetText.tr("Downloading Updates"));
