@@ -57,10 +57,6 @@ public class ElybyAccount extends AbstractAccount {
         return "mojang";
     }
 
-    @Override
-    public String getRealUserType() {
-        return "elyby";
-    }
 
     @Override
     public String getCurrentUsername() {

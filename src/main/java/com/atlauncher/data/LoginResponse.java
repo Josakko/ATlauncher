@@ -68,6 +68,4 @@ public abstract class LoginResponse {
 
         return !this.hasError;
     }
-
-    public abstract void save();
 }

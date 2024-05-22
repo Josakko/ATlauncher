@@ -12,7 +12,6 @@ public class MojangLoginResponse extends LoginResponse {
         this.offline = false;
     }
 
-    @Override
     public void save() {
         MojangAccount account = (MojangAccount) AccountManager.getAccountByName(this.username);
 

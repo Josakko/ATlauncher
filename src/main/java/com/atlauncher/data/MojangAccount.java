@@ -282,9 +282,4 @@ public class MojangAccount extends AbstractAccount {
 
         return response;
     }
-
-    @Override
-    public String getRealUserType() {
-        return "mojang";
-    }
 }

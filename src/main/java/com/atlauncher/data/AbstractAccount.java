@@ -89,8 +89,6 @@ public abstract class AbstractAccount implements Serializable {
 
     public abstract String getUserType();
 
-    public abstract String getRealUserType();
-
     public abstract String getCurrentUsername();
 
     public abstract void updateSkinPreCheck();

@@ -323,9 +323,4 @@ public class MicrosoftAccount extends AbstractAccount {
 
         return false;
     }
-
-    @Override
-    public String getRealUserType() {
-        return "msa";
-    }
 }

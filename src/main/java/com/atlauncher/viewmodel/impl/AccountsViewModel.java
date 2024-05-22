@@ -217,7 +217,6 @@ public class AccountsViewModel implements IAccountsViewModel {
 
             offlineAccount.username = loginUsername;
             offlineAccount.minecraftUsername = loginUsername;
-            offlineAccount.store = response.getAuth().saveForStorage();
 
             AccountManager.saveAccounts();
         } else {
