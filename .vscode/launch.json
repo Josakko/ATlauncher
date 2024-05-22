@@ -3,6 +3,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "com.atlauncher.App",
+            "projectName": "ATlauncher"
+        },
+        {
+            "type": "java",
             "name": "Launch",
             "request": "launch",
             "mainClass": "com.atlauncher.App",

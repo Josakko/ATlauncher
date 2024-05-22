@@ -71,12 +71,12 @@ public class ConsoleBottomBar extends BottomBar implements RelocalizationListene
             int spaceLeft = getWidth() - leftSide.getWidth() - 20;
 
             rightSide.setVisible(spaceLeft >= 40);
-            nodeCraftIcon.setVisible(spaceLeft >= 40);
+            // nodeCraftIcon.setVisible(spaceLeft >= 40);
             discordIcon.setVisible(spaceLeft >= 80);
             githubIcon.setVisible(spaceLeft >= 120);
-            redditIcon.setVisible(spaceLeft >= 160);
-            twitterIcon.setVisible(spaceLeft >= 200);
-            facebookIcon.setVisible(spaceLeft >= 240);
+            // redditIcon.setVisible(spaceLeft >= 160);
+            // twitterIcon.setVisible(spaceLeft >= 200);
+            // facebookIcon.setVisible(spaceLeft >= 240);
         });
     }
 

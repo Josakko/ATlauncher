@@ -34,13 +34,11 @@ import com.atlauncher.utils.OS;
 public abstract class BottomBar extends JPanel implements ThemeListener {
     private static final long serialVersionUID = -7488195680365431776L;
 
-    public final JButton nodeCraftIcon = new SMButton("/assets/image/social/nodecraft.png",
-            "Nodecraft - Setup a Minecraft server with an ATLauncher modpack in less than 60 seconds");
     public final JButton discordIcon = new SMButton("/assets/image/social/discord.png", "Discord");
-    public final JButton facebookIcon = new SMButton("/assets/image/social/facebook.png", "Facebook");
+    // public final JButton facebookIcon = new SMButton("/assets/image/social/facebook.png", "Facebook");
     public final JButton githubIcon = new SMButton("/assets/image/social/github.png", "GitHub");
-    public final JButton twitterIcon = new SMButton("/assets/image/social/twitter.png", "Twitter");
-    public final JButton redditIcon = new SMButton("/assets/image/social/reddit.png", "Reddit");
+    /// public final JButton twitterIcon = new SMButton("/assets/image/social/twitter.png", "Twitter");
+    // public final JButton redditIcon = new SMButton("/assets/image/social/reddit.png", "Reddit");
 
     protected final JPanel rightSide = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 8));
 
@@ -51,33 +49,31 @@ public abstract class BottomBar extends JPanel implements ThemeListener {
 
         this.add(this.rightSide, BorderLayout.EAST);
         this.setupSocialButtonListeners();
-        this.rightSide.add(this.nodeCraftIcon);
         this.rightSide.add(this.discordIcon);
-        this.rightSide.add(this.facebookIcon);
+        // this.rightSide.add(this.facebookIcon);
         this.rightSide.add(this.githubIcon);
-        this.rightSide.add(this.redditIcon);
-        this.rightSide.add(this.twitterIcon);
+        // this.rightSide.add(this.redditIcon);
+        // this.rightSide.add(this.twitterIcon);
 
         ThemeManager.addListener(this);
     }
 
     private void setupSocialButtonListeners() {
-        nodeCraftIcon.addActionListener(e -> {
-            LogManager.info("Opening Up Nodecraft");
-            OS.openWebBrowser("https://atl.pw/nodecraft-from-launcher");
-        });
         discordIcon.addActionListener(e -> {
             LogManager.info("Opening Up ATLauncher Discord");
-            OS.openWebBrowser("https://atl.pw/discord");
+            OS.openWebBrowser("https://discord.gg/xgET5epJE6");
         });
+        /*
         facebookIcon.addActionListener(e -> {
             LogManager.info("Opening Up ATLauncher Facebook Page");
             OS.openWebBrowser("https://atl.pw/facebook");
         });
+        */
         githubIcon.addActionListener(e -> {
             LogManager.info("Opening Up ATLauncher GitHub Page");
-            OS.openWebBrowser("https://atl.pw/github-launcher-3");
+            OS.openWebBrowser("https://github.com/Josakko/ATlauncher");
         });
+        /*
         redditIcon.addActionListener(e -> {
             LogManager.info("Opening Up ATLauncher Reddit Page");
             OS.openWebBrowser("https://atl.pw/reddit");
@@ -86,6 +82,7 @@ public abstract class BottomBar extends JPanel implements ThemeListener {
             LogManager.info("Opening Up ATLauncher Twitter Page");
             OS.openWebBrowser("https://atl.pw/twitter");
         });
+        */
     }
 
     public void onThemeChange() {
