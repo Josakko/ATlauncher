@@ -17,14 +17,9 @@
  */
 package com.atlauncher.utils;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-
-import com.mojang.authlib.properties.PropertyMap;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
-import com.atlauncher.data.offline.OfflineLoginResponse;
 import com.atlauncher.data.mojang.api.MojangLoginResponse;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.managers.LogManager;
@@ -65,28 +60,6 @@ public class Authentication {
         return response;
     }
 
-    public static OfflineLoginResponse checkAccount(String username) {
-        OfflineLoginResponse response = new OfflineLoginResponse(username);
-
-        Agent agent = new Agent(username, 1);
-        Proxy proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(228));
-
-        response.setAuth(new YggdrasilUserAuthentication(new YggdrasilAuthenticationService(proxy, null), agent) {
-            @Override
-            protected String getUsername() {
-                return username;
-            }
-
-            @Override
-            public PropertyMap getUserProperties() {
-                return new PropertyMap();
-            }
-        });
-
-        LogManager.debug("Logged into offline account " + username);
-
-        return response;
-    }
 
 
     public static MojangLoginResponse login(MojangAccount account, boolean usePassword) {

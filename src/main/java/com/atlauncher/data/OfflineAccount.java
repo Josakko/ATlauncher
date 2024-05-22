@@ -3,10 +3,6 @@ package com.atlauncher.data;
 import java.util.UUID;
 import java.nio.charset.StandardCharsets;
 
-import com.atlauncher.data.offline.OfflineLoginResponse;
-import com.atlauncher.managers.LogManager;
-
-
 public class OfflineAccount extends AbstractAccount {
     public OfflineAccount(String username) {
         this(
@@ -40,14 +36,6 @@ public class OfflineAccount extends AbstractAccount {
     @Override
     public String getCurrentUsername() {
         return this.minecraftUsername;
-    }
-
-    public OfflineLoginResponse login() {
-        OfflineLoginResponse response = new OfflineLoginResponse(this.minecraftUsername);
-        
-        LogManager.info("Logged into " + this.minecraftUsername + " offline account.");
-
-        return response;
     }
 
     @Override

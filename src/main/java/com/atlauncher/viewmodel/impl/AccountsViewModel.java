@@ -32,7 +32,6 @@ import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.OfflineAccount;
 import com.atlauncher.data.mojang.api.MojangLoginResponse;
-import com.atlauncher.data.offline.OfflineLoginResponse;
 import com.atlauncher.gui.dialogs.ChangeSkinDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
@@ -212,7 +211,20 @@ public class AccountsViewModel implements IAccountsViewModel {
             mojangAccount.store = response.getAuth().saveForStorage();
 
             AccountManager.saveAccounts();
-        } else if (account instanceof OfflineAccount && response instanceof OfflineLoginResponse) {
+        } else {
+            LogManager.warn("Did not edit any account");
+            return new LoginPostResult.Error("Invalid credentials.");
+        }
+
+        LogManager.info("Edited Account " + account);
+        pushNewAccounts();
+        return new LoginPostResult.Edited();
+    }
+
+    private LoginPostResult editAccount() {
+        AbstractAccount account = getSelectedAccount();
+
+         if (account instanceof OfflineAccount) {
             OfflineAccount offlineAccount = (OfflineAccount) account;
 
             offlineAccount.username = loginUsername;
@@ -228,7 +240,7 @@ public class AccountsViewModel implements IAccountsViewModel {
         pushNewAccounts();
         return new LoginPostResult.Edited();
     }
-
+    
     private LoginResponse loginResponse = null;
 
     @NotNull
@@ -245,19 +257,18 @@ public class AccountsViewModel implements IAccountsViewModel {
             LoginPostResult res = editAccount(loginResponse);
             invalidateClientToken();
             return res;
-        } else if (loginResponse != null && loginResponse instanceof OfflineLoginResponse) {
+        } else if (loginResponse == null) {
             if (selectedAccountIndex == -1) {
                 addNewOfflineAccount();
                 invalidateClientToken();
                 return new LoginPostResult.Added();
             }
 
-            LoginPostResult res = editAccount(loginResponse);
+            LoginPostResult res = editAccount();
             invalidateClientToken();
             return res;
-
         }
-        
+
         return new LoginPostResult.Error(loginResponse != null ? loginResponse.getErrorMessage() : null);
     }
 
@@ -268,14 +279,10 @@ public class AccountsViewModel implements IAccountsViewModel {
 
     @Override
     public void login() {
-        if (!Utils.isEntryValid(loginPassword)) {
-            // offline acc
-            loginResponse = Authentication.checkAccount(loginUsername);
-        } else {
+        if (Utils.isEntryValid(loginPassword)) {
             // mojang acc
             loginResponse = Authentication.checkAccount(loginUsername, loginPassword, getClientToken());
         }
-        
     }
 
     @Override
