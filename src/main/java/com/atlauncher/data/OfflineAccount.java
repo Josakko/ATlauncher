@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.nio.charset.StandardCharsets;
 
-import com.atlauncher.data.LoginResponse;
 import com.atlauncher.managers.LogManager;
 
 
