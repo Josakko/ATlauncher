@@ -42,6 +42,7 @@ import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.MojangAPIUtils;
 import com.atlauncher.utils.Utils;
+import com.atlauncher.data.mojang.api.MojangLoginResponse;
 
 // since mojang accounts arent the thing anymore maybe remove this  ??
 public class MojangAccount extends AbstractAccount {
@@ -75,7 +76,7 @@ public class MojangAccount extends AbstractAccount {
      */
     public Map<String, Object> store;
 
-    public MojangAccount(String username, String password, LoginResponse response, Boolean remember,
+    public MojangAccount(String username, String password, MojangLoginResponse response, Boolean remember,
             String clientToken) {
         this(username, password, response.getAuth().getSelectedProfile().getName(),
                 response.getAuth().getSelectedProfile().getId().toString(), remember, clientToken,
@@ -213,8 +214,8 @@ public class MojangAccount extends AbstractAccount {
         return "mojang";
     }
 
-    public LoginResponse login() {
-        LoginResponse response = null;
+    public MojangLoginResponse login() {
+        MojangLoginResponse response = null;
 
         if (this.getAccessToken() != null) {
             LogManager.info("Trying to login with access token!");

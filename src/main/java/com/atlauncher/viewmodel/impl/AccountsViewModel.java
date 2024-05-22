@@ -31,6 +31,8 @@ import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.OfflineAccount;
+import com.atlauncher.data.mojang.api.MojangLoginResponse;
+import com.atlauncher.data.offline.OfflineLoginResponse;
 import com.atlauncher.gui.dialogs.ChangeSkinDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
@@ -167,7 +169,7 @@ public class AccountsViewModel implements IAccountsViewModel {
         pushNewAccounts();
     }
 
-    private void addNewMojangAccount(LoginResponse response) {
+    private void addNewMojangAccount(MojangLoginResponse response) {
         MojangAccount account = new MojangAccount(
                 loginUsername,
                 loginPassword,
@@ -182,7 +184,7 @@ public class AccountsViewModel implements IAccountsViewModel {
     private LoginPostResult editAccount(LoginResponse response) {
         AbstractAccount account = getSelectedAccount();
 
-        if (account instanceof MojangAccount && response.getRealAccountType() == "mojang") {
+        if (account instanceof MojangAccount && response instanceof MojangLoginResponse) {
             MojangAccount mojangAccount = (MojangAccount) account;
 
             mojangAccount.username = loginUsername;
@@ -210,7 +212,7 @@ public class AccountsViewModel implements IAccountsViewModel {
             mojangAccount.store = response.getAuth().saveForStorage();
 
             AccountManager.saveAccounts();
-        } else if (account instanceof OfflineAccount && response.getRealAccountType() == "offline") {
+        } else if (account instanceof OfflineAccount && response instanceof OfflineLoginResponse) {
             OfflineAccount offlineAccount = (OfflineAccount) account;
 
             offlineAccount.username = loginUsername;
@@ -233,10 +235,10 @@ public class AccountsViewModel implements IAccountsViewModel {
     @NotNull
     @Override
     public LoginPostResult loginPost() {
-        if (loginResponse != null && loginResponse.getRealAccountType() == "mojang" && loginResponse.hasAuth()
+        if (loginResponse != null && loginResponse instanceof MojangLoginResponse && loginResponse.hasAuth()
                 && loginResponse.isValidAuth()) {
             if (selectedAccountIndex == -1) {
-                addNewMojangAccount(loginResponse);
+                addNewMojangAccount((MojangLoginResponse) loginResponse);
                 invalidateClientToken();
                 return new LoginPostResult.Added();
             }
@@ -244,7 +246,7 @@ public class AccountsViewModel implements IAccountsViewModel {
             LoginPostResult res = editAccount(loginResponse);
             invalidateClientToken();
             return res;
-        } else if (loginResponse != null && loginResponse.getRealAccountType() == "offline") {
+        } else if (loginResponse != null && loginResponse instanceof OfflineLoginResponse) {
             if (selectedAccountIndex == -1) {
                 addNewOfflineAccount();
                 invalidateClientToken();

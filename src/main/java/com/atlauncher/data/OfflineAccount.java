@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.nio.charset.StandardCharsets;
 
+import com.atlauncher.data.offline.OfflineLoginResponse;
 import com.atlauncher.managers.LogManager;
 
 
@@ -54,8 +55,8 @@ public class OfflineAccount extends AbstractAccount {
     }
 
 
-    public LoginResponse login() {
-        LoginResponse response = new LoginResponse(this.minecraftUsername, "offline");
+    public OfflineLoginResponse login() {
+        OfflineLoginResponse response = new OfflineLoginResponse(this.minecraftUsername);
         
         LogManager.info("Logged into " + this.minecraftUsername + " offline account.");
 

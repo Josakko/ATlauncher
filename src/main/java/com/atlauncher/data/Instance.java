@@ -166,6 +166,8 @@ import com.atlauncher.utils.ZipNameMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
+import com.atlauncher.data.mojang.api.MojangLoginResponse;
+
 
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
@@ -969,14 +971,14 @@ public class Instance extends MinecraftVersion {
 
                 if (account instanceof MojangAccount) {
                     MojangAccount mojangAccount = (MojangAccount) account;
-                    LoginResponse session;
+                    MojangLoginResponse session;
 
                     if (offline) {
-                        session = new LoginResponse(mojangAccount.username, "mojang");
+                        session = new MojangLoginResponse(mojangAccount.username);
                         session.setOffline();
                     } else {
                         LogManager.info("Logging into Minecraft!");
-                        ProgressDialog<LoginResponse> loginDialog = new ProgressDialog<>(
+                        ProgressDialog<MojangLoginResponse> loginDialog = new ProgressDialog<>(
                                 GetText.tr("Logging Into Minecraft"), 0, GetText.tr("Logging Into Minecraft"),
                                 "Aborted login to Minecraft!");
                         loginDialog.addThread(new Thread(() -> {

@@ -1,65 +1,24 @@
-/*
- * ATLauncher - https://github.com/ATLauncher/ATLauncher
- * Copyright (C) 2013-2022 ATLauncher
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
 package com.atlauncher.data;
 
-import com.atlauncher.managers.AccountManager;
 import com.mojang.authlib.UserAuthentication;
 
-public class LoginResponse {
-    private boolean offline;
-    private boolean hasError;
-    private String errorMessage;
-    private UserAuthentication auth;
-    private final String username;
-    // "mojang" or "offline"
-    private String accountType;
-
-    public LoginResponse(String username, String realAccountType) {
-        this.hasError = false;
-        this.auth = null;
-        this.username = username;
-        this.accountType = realAccountType;
-
-        if (realAccountType == "offline") {
-            this.offline = true;
-        } else {
-            this.offline = false;
-        }
-    }
+public abstract class LoginResponse {
+    public boolean offline;
+    public boolean hasError;
+    public String errorMessage;
+    public UserAuthentication auth;
+    public String username;
 
     public void setOffline() {
-        if (accountType != "offline") {
-            this.offline = true;
-        }
+        this.offline = true;
     }
 
     public void setOnline() {
-        if (accountType != "offline") {
-            this.offline = false;
-        }
+        this.offline = false;
     }
 
     public boolean isOffline() {
         return this.offline;
-    }
-
-    public String getRealAccountType() {
-        return this.accountType;
     }
 
     public void setErrorMessage(String errorMessage) {
@@ -110,20 +69,5 @@ public class LoginResponse {
         return !this.hasError;
     }
 
-    public void save() {
-        if (accountType == "mojang") {
-            MojangAccount account = (MojangAccount) AccountManager.getAccountByName(this.username);
-
-            if (account != null) {
-                account.store = this.auth.saveForStorage();
-            }
-        } else if (accountType == "offline") {
-            OfflineAccount account = (OfflineAccount) AccountManager.getAccountByName(this.username);
-
-            if (account != null) {
-                account.store = this.auth.saveForStorage();
-            }
-        }
-
-    }
+    public abstract void save();
 }
