@@ -47,7 +47,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.ElybyAccount;
-import com.atlauncher.data.LoginResponse;
+import com.atlauncher.data.mojang.api.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.OfflineAccount;

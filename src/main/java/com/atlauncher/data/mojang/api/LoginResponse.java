@@ -1,20 +1,25 @@
-package com.atlauncher.data;
+package com.atlauncher.data.mojang.api;
 
+import com.atlauncher.managers.AccountManager;
 import com.mojang.authlib.UserAuthentication;
+import com.atlauncher.data.MojangAccount;
 
-public abstract class LoginResponse {
-    public boolean offline;
-    public boolean hasError;
-    public String errorMessage;
-    public UserAuthentication auth;
-    public String username;
+public class LoginResponse {
+    private boolean offline;
+    private boolean hasError;
+    private String errorMessage;
+    private UserAuthentication auth;
+    private String username;
+
+    public LoginResponse(String username) {
+        this.hasError = false;
+        this.auth = null;
+        this.username = username;
+        this.offline = false;
+    }
 
     public void setOffline() {
         this.offline = true;
-    }
-
-    public void setOnline() {
-        this.offline = false;
     }
 
     public boolean isOffline() {
@@ -68,4 +73,13 @@ public abstract class LoginResponse {
 
         return !this.hasError;
     }
+
+    public void save() {
+        MojangAccount account = (MojangAccount) AccountManager.getAccountByName(this.username);
+
+        if (account != null) {
+            account.store = this.auth.saveForStorage();
+        }
+    }
 }
+

@@ -27,11 +27,10 @@ import org.jetbrains.annotations.Nullable;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.data.AbstractAccount;
-import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.OfflineAccount;
-import com.atlauncher.data.mojang.api.MojangLoginResponse;
+import com.atlauncher.data.mojang.api.LoginResponse;
 import com.atlauncher.gui.dialogs.ChangeSkinDialog;
 import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.DialogManager;
@@ -168,7 +167,7 @@ public class AccountsViewModel implements IAccountsViewModel {
         pushNewAccounts();
     }
 
-    private void addNewMojangAccount(MojangLoginResponse response) {
+    private void addNewMojangAccount(LoginResponse response) {
         MojangAccount account = new MojangAccount(
                 loginUsername,
                 loginPassword,
@@ -183,7 +182,7 @@ public class AccountsViewModel implements IAccountsViewModel {
     private LoginPostResult editAccount(LoginResponse response) {
         AbstractAccount account = getSelectedAccount();
 
-        if (account instanceof MojangAccount && response instanceof MojangLoginResponse) {
+        if (account instanceof MojangAccount && response instanceof LoginResponse) {
             MojangAccount mojangAccount = (MojangAccount) account;
 
             mojangAccount.username = loginUsername;
@@ -246,10 +245,10 @@ public class AccountsViewModel implements IAccountsViewModel {
     @NotNull
     @Override
     public LoginPostResult loginPost() {
-        if (loginResponse != null && loginResponse instanceof MojangLoginResponse && loginResponse.hasAuth()
+        if (loginResponse != null && loginResponse instanceof LoginResponse && loginResponse.hasAuth()
                 && loginResponse.isValidAuth()) {
             if (selectedAccountIndex == -1) {
-                addNewMojangAccount((MojangLoginResponse) loginResponse);
+                addNewMojangAccount((LoginResponse) loginResponse);
                 invalidateClientToken();
                 return new LoginPostResult.Added();
             }

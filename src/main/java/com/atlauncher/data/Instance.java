@@ -121,6 +121,7 @@ import com.atlauncher.data.modrinth.ModrinthSide;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackFile;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
+import com.atlauncher.data.mojang.api.LoginResponse;
 import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.multimc.MultiMCRequire;
@@ -166,8 +167,6 @@ import com.atlauncher.utils.ZipNameMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonObject;
-import com.atlauncher.data.mojang.api.MojangLoginResponse;
-
 
 import net.arikia.dev.drpc.DiscordRPC;
 import net.arikia.dev.drpc.DiscordRichPresence;
@@ -971,14 +970,14 @@ public class Instance extends MinecraftVersion {
 
                 if (account instanceof MojangAccount) {
                     MojangAccount mojangAccount = (MojangAccount) account;
-                    MojangLoginResponse session;
+                    LoginResponse session;
 
                     if (offline) {
-                        session = new MojangLoginResponse(mojangAccount.username);
+                        session = new LoginResponse(mojangAccount.username);
                         session.setOffline();
                     } else {
                         LogManager.info("Logging into Minecraft!");
-                        ProgressDialog<MojangLoginResponse> loginDialog = new ProgressDialog<>(
+                        ProgressDialog<LoginResponse> loginDialog = new ProgressDialog<>(
                                 GetText.tr("Logging Into Minecraft"), 0, GetText.tr("Logging Into Minecraft"),
                                 "Aborted login to Minecraft!");
                         loginDialog.addThread(new Thread(() -> {

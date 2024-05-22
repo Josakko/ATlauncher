@@ -20,7 +20,7 @@ package com.atlauncher.utils;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.App;
-import com.atlauncher.data.mojang.api.MojangLoginResponse;
+import com.atlauncher.data.mojang.api.LoginResponse;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.managers.LogManager;
 import com.mojang.authlib.Agent;
@@ -31,10 +31,10 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
 
 public class Authentication {
-    public static MojangLoginResponse checkAccount(String username, String password, String clientToken) {
+    public static LoginResponse checkAccount(String username, String password, String clientToken) {
         YggdrasilUserAuthentication auth = (YggdrasilUserAuthentication) new YggdrasilAuthenticationService(App.settings.proxy, clientToken).createUserAuthentication(Agent.MINECRAFT);
 
-        MojangLoginResponse response = new MojangLoginResponse(username);
+        LoginResponse response = new LoginResponse(username);
 
         auth.setUsername(username);
         auth.setPassword(password);
@@ -62,10 +62,10 @@ public class Authentication {
 
 
 
-    public static MojangLoginResponse login(MojangAccount account, boolean usePassword) {
+    public static LoginResponse login(MojangAccount account, boolean usePassword) {
         UserAuthentication auth = new YggdrasilAuthenticationService(App.settings.proxy, account.clientToken)
                 .createUserAuthentication(Agent.MINECRAFT);
-        MojangLoginResponse response = new MojangLoginResponse(account.username);
+        LoginResponse response = new LoginResponse(account.username);
 
         if (!usePassword && account.store != null) {
             auth.loadFromStorage(account.store);
