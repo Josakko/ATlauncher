@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.data.AbstractAccount;
+import com.atlauncher.data.ElybyAccount;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.OfflineAccount;
@@ -81,8 +82,8 @@ public class AccountsViewModel implements IAccountsViewModel {
 
     @Override
     public void setSelectedAccount(int index) {
-        selectedAccountIndex = index - 1;
-        if (index == 0)
+        selectedAccountIndex = index - 2;
+        if (index <= 1)
             selected.accept(null);
         else
             selected.accept(getSelectedAccount());
@@ -101,6 +102,27 @@ public class AccountsViewModel implements IAccountsViewModel {
 
         if (account instanceof MicrosoftAccount)
             return (MicrosoftAccount) account;
+        return null;
+    }
+
+    public Accounts getSelectedAccountType() {
+        if (getSelectedIndex() == 0) {
+            return new Accounts.Mojang();
+        } else if (getSelectedIndex() == 1) {
+            return new Accounts.Offline();
+        }
+
+        AbstractAccount account = getSelectedAccount();
+        if (account instanceof MojangAccount) {
+            return new Accounts.Mojang();
+        } else if (account instanceof OfflineAccount) {
+            return new Accounts.Offline();
+        } else if (account instanceof ElybyAccount) {
+            return new Accounts.ElyBy();
+        } else if (account instanceof MicrosoftAccount) {
+            return new Accounts.Microsoft();
+        }
+
         return null;
     }
 
@@ -273,15 +295,17 @@ public class AccountsViewModel implements IAccountsViewModel {
 
     @Override
     public int getSelectedIndex() {
-        return selectedAccountIndex + 1;
+        return selectedAccountIndex + 2;
     }
 
     @Override
-    public void login() {
-        if (Utils.isEntryValid(loginPassword)) {
-            // mojang acc
-            loginResponse = Authentication.checkAccount(loginUsername, loginPassword, getClientToken());
-        }
+    public void mojangLogin() {
+        loginResponse = Authentication.checkAccount(loginUsername, loginPassword, getClientToken());
+    }
+
+    @Override
+    public void offlineLogin() {
+        loginResponse = null;
     }
 
     @Override

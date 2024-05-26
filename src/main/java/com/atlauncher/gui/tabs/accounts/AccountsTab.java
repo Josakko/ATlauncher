@@ -65,6 +65,7 @@ import com.atlauncher.utils.OS;
 import com.atlauncher.utils.SkinUtils;
 import com.atlauncher.utils.Utils;
 import com.atlauncher.viewmodel.base.IAccountsViewModel;
+import com.atlauncher.viewmodel.base.IAccountsViewModel.Accounts;
 import com.atlauncher.viewmodel.base.IAccountsViewModel.LoginPostResult;
 import com.atlauncher.viewmodel.base.IAccountsViewModel.LoginPreCheckResult;
 import com.atlauncher.viewmodel.impl.AccountsViewModel;
@@ -409,7 +410,10 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
      */
     private void observe() {
         viewModel.onAccountSelected(account -> {
-            if (account == null) {
+            int selectionIndex = viewModel.getSelectedIndex();
+
+            // Mojang account
+            if (selectionIndex == 0) {
                 usernameField.setText("");
                 passwordField.setText("");
                 rememberField.setSelected(false);
@@ -429,6 +433,26 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 loginWithElyByButton.setVisible(true);
                 refreshAccessTokenMenuItem.setVisible(false);
             
+            // Offline account
+            } else if (selectionIndex == 1) {
+                usernameField.setText("");
+                passwordField.setText("");
+                rememberField.setSelected(false);
+                leftButton.setText(GetText.tr("Add"));
+                rightButton.setText(GetText.tr("Clear"));
+                userSkin.setIcon(SkinUtils.getDefaultSkin());
+
+                usernameLabel.setVisible(true);
+                usernameField.setVisible(true);
+                passwordLabel.setVisible(false);
+                passwordField.setVisible(false);
+                rememberLabel.setVisible(false);
+                rememberField.setVisible(false);
+                leftButton.setVisible(true);
+                rightButton.setVisible(true);
+                loginWithMicrosoftButton.setVisible(true);
+                loginWithElyByButton.setVisible(true);
+                refreshAccessTokenMenuItem.setVisible(false);
             } else {
                 usernameLabel.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount);
                 usernameField.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount);
@@ -469,15 +493,13 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
                 leftButton.setText(GetText.tr("Save"));
                 rightButton.setText(GetText.tr("Delete"));
-                userSkin.setIcon(account.getMinecraftSkin());
+                // userSkin.setIcon(account.getMinecraftSkin());
             }
         });
         viewModel.onAccountsNamesChanged(accounts -> {
             accountsComboBox.removeAllItems();
-            accountsComboBox.addItem(
-                    new ComboItem<>(
-                            null,
-                            GetText.tr("Add An Account")));
+            accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Mojang Account")));
+            accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Offline Account")));
             for (String account : accounts) {
                 accountsComboBox.addItem(new ComboItem<>(null, account));
             }
@@ -513,6 +535,17 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             return;
         }
 
+        // if mojang account
+        if (viewModel.getSelectedAccountType() instanceof Accounts.Mojang && !Utils.isEntryValid(new String(passwordField.getPassword())) ) {
+            DialogManager
+                    .okDialog()
+                    .setTitle(GetText.tr("Account Not Added"))
+                    .setContent(GetText.tr("Invalid password."))
+                    .setType(DialogManager.ERROR)
+                    .show();
+            return;
+        }
+
         // Pre check
         LoginPreCheckResult preCheckResult = viewModel.loginPreCheck();
         if (preCheckResult instanceof LoginPreCheckResult.Exists) {
@@ -532,7 +565,12 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 GetText.tr("Logging Into Minecraft"),
                 "Aborting login for " + viewModel.getLoginUsername());
         dialog.addThread(new Thread(() -> {
-            viewModel.login();
+            if (viewModel.getSelectedAccountType() instanceof Accounts.Mojang) {
+                viewModel.mojangLogin();
+            } else if (viewModel.getSelectedAccountType() instanceof Accounts.Offline) {
+                viewModel.offlineLogin();    
+            }
+
             dialog.close();
         }));
         dialog.start();

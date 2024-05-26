@@ -65,6 +65,11 @@ public interface IAccountsViewModel {
      */
     void setSelectedAccount(int index);
 
+    /*
+     * Get selected account type
+     */
+    public Accounts getSelectedAccountType();
+
     /**
      * Get the selected index
      *
@@ -163,9 +168,14 @@ public interface IAccountsViewModel {
     LoginPreCheckResult loginPreCheck();
 
     /**
-     * Check the login with HQ
+     * Check the mojang login with HQ
      */
-    void login();
+    void mojangLogin();
+
+    /*
+     * Set the loginResponse to null since it is not needed for offline accounts
+     */
+    void offlineLogin();
 
     /**
      * Finalize the login
@@ -214,4 +224,33 @@ public interface IAccountsViewModel {
             }
         }
     }
+
+    /*
+     * Account type
+     */
+    abstract class Accounts {
+        /*
+         * Offline account
+         */
+        public static class Offline extends Accounts {
+        }
+        
+        /*
+         * Mojang account
+         */
+        public static class Mojang extends Accounts {
+        }
+
+        /*
+         * Ely.by account
+         */
+        public static class ElyBy extends Accounts {
+        }
+
+        /*
+         * Microsoft account
+         */
+        public static class Microsoft extends Accounts{
+        }
+    }   
 }
