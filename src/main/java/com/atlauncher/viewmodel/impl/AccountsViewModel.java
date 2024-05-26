@@ -211,17 +211,6 @@ public class AccountsViewModel implements IAccountsViewModel {
             mojangAccount.minecraftUsername = response.getAuth().getSelectedProfile().getName();
             mojangAccount.uuid = response.getAuth().getSelectedProfile().getId().toString();
             if (loginRemember) {
-                // probably not needed at all but just in case
-                if (!Utils.isEntryValid(loginPassword)) {
-                    DialogManager
-                            .okDialog()
-                            .setTitle(GetText.tr("Account Not Added"))
-                            .setContent(GetText.tr("Invalid password."))
-                            .setType(DialogManager.ERROR)
-                            .show();
-                    return new LoginPostResult.Error("Invalid password.");
-                }
-                
                 mojangAccount.setPassword(loginPassword);
             } else {
                 mojangAccount.encryptedPassword = null;
