@@ -2,41 +2,17 @@ package com.atlauncher.data.mojang.api;
 
 import com.atlauncher.managers.AccountManager;
 import com.mojang.authlib.UserAuthentication;
+import com.atlauncher.data.LoginResponse;
 import com.atlauncher.data.MojangAccount;
 
-public class LoginResponse {
-    private boolean offline;
-    private boolean hasError;
-    private String errorMessage;
+public class MojangLoginResponse extends LoginResponse {
     private UserAuthentication auth;
-    private String username;
 
-    public LoginResponse(String username) {
+    public MojangLoginResponse(String username) {
         this.hasError = false;
         this.auth = null;
         this.username = username;
         this.offline = false;
-    }
-
-    public void setOffline() {
-        this.offline = true;
-    }
-
-    public boolean isOffline() {
-        return this.offline;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-        this.hasError = true;
-    }
-
-    public boolean hasError() {
-        return this.hasError;
-    }
-
-    public String getErrorMessage() {
-        return (this.errorMessage == null ? "Unknown Error Occurred" : this.errorMessage);
     }
 
     public void setAuth(UserAuthentication auth) {
@@ -49,10 +25,6 @@ public class LoginResponse {
 
     public UserAuthentication getAuth() {
         return this.auth;
-    }
-
-    public String getUsername() {
-        return this.username;
     }
 
     public boolean isValidAuth() {

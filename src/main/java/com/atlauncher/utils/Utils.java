@@ -60,6 +60,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
@@ -663,16 +664,27 @@ public class Utils {
     }
 
     /**
+     * Encrypt with md5 hash of mac address as a key
+     * 
+     * @param data the data to encrypt
+     * @return the string
+     */
+    public static String encrypt(String data) {
+        return encrypt(data, getMACAddressHash());
+    }
+
+    /**
      * Encrypt.
      *
      * @param Data the data
+     * @param stringKey the key for encryption
      * @return the string
      */
-    public static String encrypt(String Data) {
+    public static String encrypt(String Data, String stringKey) {
         Key key;
         String encryptedValue = null;
         try {
-            key = generateKey();
+            key = new SecretKeySpec(stringKey.getBytes(), 0, 16, "AES");
             Cipher c = Cipher.getInstance("AES");
             c.init(Cipher.ENCRYPT_MODE, key);
             byte[] encVal = c.doFinal(Data.getBytes());
@@ -684,16 +696,27 @@ public class Utils {
     }
 
     /**
+     * Decrypt with md5 hash of mac address as a key
+     * 
+     * @param data the data to decrypt
+     * @return the string
+     */
+    public static String decrypt(String data) {
+        return decrypt(data, getMACAddressHash());
+    }
+
+    /**
      * Decrypt.
      *
      * @param encryptedData the encrypted data
+     * @param stringKey the key for decryption
      * @return the string
      */
-    public static String decrypt(String encryptedData) {
+    public static String decrypt(String encryptedData, String stringKey) {
         Key key;
         String decryptedValue = null;
         try {
-            key = generateKey();
+            key = new SecretKeySpec(stringKey.getBytes(), 0, 16, "AES");
             Cipher c = Cipher.getInstance("AES");
             c.init(Cipher.DECRYPT_MODE, key);
             byte[] decordedValue = Base64.decode(encryptedData);
@@ -726,16 +749,6 @@ public class Utils {
         } catch (Exception ignored) {
         }
         return decryptedValue;
-    }
-
-    /**
-     * Generate key.
-     *
-     * @return the key
-     * @throws Exception the exception
-     */
-    private static Key generateKey() throws Exception {
-        return new SecretKeySpec(getMACAdressHash().getBytes(), 0, 16, "AES");
     }
 
     /**
@@ -1439,7 +1452,7 @@ public class Utils {
         }
     }
 
-    private static String getMACAdressHash() {
+    private static String getMACAddressHash() {
         String returnStr = null;
         try {
             InetAddress ip;
@@ -1692,5 +1705,9 @@ public class Utils {
         }
 
         return stream;
+    }
+
+    public static String getOfflineUUID(String username) {
+        return UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8)).toString();
     }
 }

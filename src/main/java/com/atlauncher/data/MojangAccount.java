@@ -34,7 +34,7 @@ import org.mini2Dx.gettext.GetText;
 import com.atlauncher.App;
 import com.atlauncher.Gsons;
 import com.atlauncher.builders.HTMLBuilder;
-import com.atlauncher.data.mojang.api.LoginResponse;
+import com.atlauncher.data.mojang.api.MojangLoginResponse;
 import com.atlauncher.data.mojang.api.MinecraftProfileResponse;
 import com.atlauncher.data.mojang.api.ProfileTexture;
 import com.atlauncher.managers.AccountManager;
@@ -76,7 +76,7 @@ public class MojangAccount extends AbstractAccount {
      */
     public Map<String, Object> store;
 
-    public MojangAccount(String username, String password, LoginResponse response, Boolean remember,
+    public MojangAccount(String username, String password, MojangLoginResponse response, Boolean remember,
             String clientToken) {
         this(username, password, response.getAuth().getSelectedProfile().getName(),
                 response.getAuth().getSelectedProfile().getId().toString(), remember, clientToken,
@@ -214,8 +214,8 @@ public class MojangAccount extends AbstractAccount {
         return "mojang";
     }
 
-    public LoginResponse login() {
-        LoginResponse response = null;
+    public MojangLoginResponse login() {
+        MojangLoginResponse response = null;
 
         if (this.getAccessToken() != null) {
             LogManager.info("Trying to login with access token!");

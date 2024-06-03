@@ -1,13 +1,12 @@
 package com.atlauncher.data;
 
-import java.util.UUID;
-import java.nio.charset.StandardCharsets;
+import com.atlauncher.utils.Utils;
 
 public class OfflineAccount extends AbstractAccount {
     public OfflineAccount(String username) {
         this(
                 username,
-                UUID.nameUUIDFromBytes(("OfflinePlayer:" + username).getBytes(StandardCharsets.UTF_8)).toString()
+                Utils.getOfflineUUID(username)
             );
     }
 
@@ -16,7 +15,6 @@ public class OfflineAccount extends AbstractAccount {
         this.minecraftUsername = username;
         this.uuid = uuid;
     }
-
 
     @Override
     public String getAccessToken() {
@@ -50,5 +48,4 @@ public class OfflineAccount extends AbstractAccount {
     public String getSkinUrl() {
         return null;
     }
-    
 }

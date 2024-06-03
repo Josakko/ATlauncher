@@ -121,7 +121,7 @@ import com.atlauncher.data.modrinth.ModrinthSide;
 import com.atlauncher.data.modrinth.ModrinthVersion;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackFile;
 import com.atlauncher.data.modrinth.pack.ModrinthModpackManifest;
-import com.atlauncher.data.mojang.api.LoginResponse;
+import com.atlauncher.data.mojang.api.MojangLoginResponse;
 import com.atlauncher.data.multimc.MultiMCComponent;
 import com.atlauncher.data.multimc.MultiMCManifest;
 import com.atlauncher.data.multimc.MultiMCRequire;
@@ -970,14 +970,14 @@ public class Instance extends MinecraftVersion {
 
                 if (account instanceof MojangAccount) {
                     MojangAccount mojangAccount = (MojangAccount) account;
-                    LoginResponse session;
+                    MojangLoginResponse session;
 
                     if (offline) {
-                        session = new LoginResponse(mojangAccount.username);
+                        session = new MojangLoginResponse(mojangAccount.username);
                         session.setOffline();
                     } else {
                         LogManager.info("Logging into Minecraft!");
-                        ProgressDialog<LoginResponse> loginDialog = new ProgressDialog<>(
+                        ProgressDialog<MojangLoginResponse> loginDialog = new ProgressDialog<>(
                                 GetText.tr("Logging Into Minecraft"), 0, GetText.tr("Logging Into Minecraft"),
                                 "Aborted login to Minecraft!");
                         loginDialog.addThread(new Thread(() -> {

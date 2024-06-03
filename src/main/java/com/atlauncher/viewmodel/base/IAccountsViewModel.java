@@ -177,6 +177,11 @@ public interface IAccountsViewModel {
      */
     void offlineLogin();
 
+    /*
+     * Check the ely.by login with the server and get the profile
+     */
+    void elybyLogin();
+
     /**
      * Finalize the login
      *

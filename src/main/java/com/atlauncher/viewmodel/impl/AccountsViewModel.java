@@ -24,20 +24,20 @@ import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.mini2Dx.gettext.GetText;
 
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.ElybyAccount;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.OfflineAccount;
-import com.atlauncher.data.mojang.api.LoginResponse;
+import com.atlauncher.data.elyby.ElybyLoginResponse;
+import com.atlauncher.data.LoginResponse;
+import com.atlauncher.data.mojang.api.MojangLoginResponse;
 import com.atlauncher.gui.dialogs.ChangeSkinDialog;
 import com.atlauncher.managers.AccountManager;
-import com.atlauncher.managers.DialogManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Authentication;
-import com.atlauncher.utils.Utils;
+import com.atlauncher.utils.ElyByAuth;
 import com.atlauncher.viewmodel.base.IAccountsViewModel;
 
 /**
@@ -82,8 +82,8 @@ public class AccountsViewModel implements IAccountsViewModel {
 
     @Override
     public void setSelectedAccount(int index) {
-        selectedAccountIndex = index - 2;
-        if (index <= 1)
+        selectedAccountIndex = index - 3;
+        if (index <= 2)
             selected.accept(null);
         else
             selected.accept(getSelectedAccount());
@@ -105,11 +105,14 @@ public class AccountsViewModel implements IAccountsViewModel {
         return null;
     }
 
+    @Override
     public Accounts getSelectedAccountType() {
         if (getSelectedIndex() == 0) {
             return new Accounts.Mojang();
         } else if (getSelectedIndex() == 1) {
             return new Accounts.Offline();
+        } else if (getSelectedIndex() == 2) {
+            return new Accounts.ElyBy();
         }
 
         AbstractAccount account = getSelectedAccount();
@@ -189,7 +192,7 @@ public class AccountsViewModel implements IAccountsViewModel {
         pushNewAccounts();
     }
 
-    private void addNewMojangAccount(LoginResponse response) {
+    private void addNewMojangAccount(MojangLoginResponse response) {
         MojangAccount account = new MojangAccount(
                 loginUsername,
                 loginPassword,
@@ -201,15 +204,27 @@ public class AccountsViewModel implements IAccountsViewModel {
         pushNewAccounts();
     }
 
+    private void addNewElybyAccount(ElybyLoginResponse response) {
+        ElybyAccount account = new ElybyAccount(
+                response,
+                loginUsername,
+                loginPassword,
+                loginRemember);
+
+        AccountManager.addAccount(account);
+        pushNewAccounts();
+    }
+
     private LoginPostResult editAccount(LoginResponse response) {
         AbstractAccount account = getSelectedAccount();
 
         if (account instanceof MojangAccount && response instanceof LoginResponse) {
             MojangAccount mojangAccount = (MojangAccount) account;
+            MojangLoginResponse mojangResponse = (MojangLoginResponse) response;
 
             mojangAccount.username = loginUsername;
-            mojangAccount.minecraftUsername = response.getAuth().getSelectedProfile().getName();
-            mojangAccount.uuid = response.getAuth().getSelectedProfile().getId().toString();
+            mojangAccount.minecraftUsername = mojangResponse.getAuth().getSelectedProfile().getName();
+            mojangAccount.uuid = mojangResponse.getAuth().getSelectedProfile().getId().toString();
             if (loginRemember) {
                 mojangAccount.setPassword(loginPassword);
             } else {
@@ -218,7 +233,7 @@ public class AccountsViewModel implements IAccountsViewModel {
             }
             mojangAccount.remember = loginRemember;
             mojangAccount.clientToken = getClientToken();
-            mojangAccount.store = response.getAuth().saveForStorage();
+            mojangAccount.store = mojangResponse.getAuth().saveForStorage();
 
             AccountManager.saveAccounts();
         } else {
@@ -256,10 +271,29 @@ public class AccountsViewModel implements IAccountsViewModel {
     @NotNull
     @Override
     public LoginPostResult loginPost() {
-        if (loginResponse != null && loginResponse instanceof LoginResponse && loginResponse.hasAuth()
-                && loginResponse.isValidAuth()) {
-            if (selectedAccountIndex == -1) {
-                addNewMojangAccount((LoginResponse) loginResponse);
+        if (loginResponse != null && loginResponse.hasError()) {
+            return new LoginPostResult.Error(loginResponse.getErrorMessage());
+        }
+
+        if (loginResponse instanceof MojangLoginResponse) {
+            MojangLoginResponse mojangResponse = (MojangLoginResponse) loginResponse;
+            if (mojangResponse.hasAuth() && mojangResponse.isValidAuth()) {
+                if (getSelectedIndex() <= 2) {
+                    // mojang account is being added
+                    addNewMojangAccount(mojangResponse);
+                    invalidateClientToken();
+                    return new LoginPostResult.Added();
+                }
+                
+                LoginPostResult res = editAccount(loginResponse);
+                invalidateClientToken();
+                return res;
+            } 
+        
+        } else if (loginResponse instanceof ElybyLoginResponse) {
+            if (getSelectedIndex() <= 2) {
+                // ely.by account is being added
+                addNewElybyAccount((ElybyLoginResponse) loginResponse);
                 invalidateClientToken();
                 return new LoginPostResult.Added();
             }
@@ -267,8 +301,10 @@ public class AccountsViewModel implements IAccountsViewModel {
             LoginPostResult res = editAccount(loginResponse);
             invalidateClientToken();
             return res;
+
         } else if (loginResponse == null) {
-            if (selectedAccountIndex == -1) {
+            if (getSelectedIndex() <= 2) {
+                // offline account is being added
                 addNewOfflineAccount();
                 invalidateClientToken();
                 return new LoginPostResult.Added();
@@ -284,7 +320,7 @@ public class AccountsViewModel implements IAccountsViewModel {
 
     @Override
     public int getSelectedIndex() {
-        return selectedAccountIndex + 2;
+        return selectedAccountIndex + 3;
     }
 
     @Override
@@ -295,6 +331,11 @@ public class AccountsViewModel implements IAccountsViewModel {
     @Override
     public void offlineLogin() {
         loginResponse = null;
+    }
+
+    @Override
+    public void elybyLogin() {
+        loginResponse = ElyByAuth.checkAccount(loginUsername, loginPassword, getClientToken());
     }
 
     @Override

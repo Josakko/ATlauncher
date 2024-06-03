@@ -42,7 +42,7 @@ import com.atlauncher.data.OfflineAccount;
 import com.atlauncher.data.minecraft.Library;
 import com.atlauncher.data.minecraft.LoggingClient;
 import com.atlauncher.data.minecraft.PropertyMapSerializer;
-import com.atlauncher.data.mojang.api.LoginResponse;
+import com.atlauncher.data.mojang.api.MojangLoginResponse;
 import com.atlauncher.managers.ConfigManager;
 import com.atlauncher.managers.LWJGLManager;
 import com.atlauncher.managers.LogManager;
@@ -70,7 +70,7 @@ public class MCLauncher {
         return launch(account, instance, "[]", nativesTempDir.toFile(), lwjglNativesTempDir, wrapperCommand, username);
     }
 
-    public static Process launch(MojangAccount account, Instance instance, LoginResponse response, Path nativesTempDir,
+    public static Process launch(MojangAccount account, Instance instance, MojangLoginResponse response, Path nativesTempDir,
             Path lwjglNativesTempDir, String wrapperCommand, String username) throws Exception {
         String props = "[]";
 

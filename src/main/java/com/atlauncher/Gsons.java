@@ -20,6 +20,7 @@ package com.atlauncher;
 import java.awt.Color;
 import java.time.Instant;
 import java.util.Date;
+import java.util.UUID;
 
 import com.atlauncher.annot.ExcludeFromGsonSerialization;
 import com.atlauncher.data.AbstractAccount;
@@ -53,6 +54,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mojang.util.UUIDTypeAdapter;
 
 public final class Gsons {
     public static final ExclusionStrategy exclusionAnnotationStrategy = new ExclusionStrategy() {
@@ -84,6 +86,7 @@ public final class Gsons {
             .registerTypeAdapter(ForgeLibrary.class, new ForgeLibraryTypeAdapter())
             .registerTypeAdapter(QuiltLibrary.class, new QuiltLibraryTypeAdapter())
             .registerTypeAdapter(QuiltMetaLauncherMeta.class, new QuiltMetaLauncherMetaTypeAdapter())
+            .registerTypeAdapter(UUID.class, new UUIDTypeAdapter())
             .addSerializationExclusionStrategy(exclusionAnnotationStrategy).create();
 
     public static final Gson DEFAULT = BASE.newBuilder().setPrettyPrinting().create();

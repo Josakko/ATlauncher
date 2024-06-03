@@ -47,7 +47,7 @@ import com.atlauncher.builders.HTMLBuilder;
 import com.atlauncher.constants.UIConstants;
 import com.atlauncher.data.AbstractAccount;
 import com.atlauncher.data.ElybyAccount;
-import com.atlauncher.data.mojang.api.LoginResponse;
+import com.atlauncher.data.mojang.api.MojangLoginResponse;
 import com.atlauncher.data.MicrosoftAccount;
 import com.atlauncher.data.MojangAccount;
 import com.atlauncher.data.OfflineAccount;
@@ -251,7 +251,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         leftButton.addActionListener(e -> login());
         rightButton = new JButton(GetText.tr("Clear"));
         rightButton.addActionListener(e -> {
-            if (accountsComboBox.getSelectedIndex() == 0) {
+            if (accountsComboBox.getSelectedIndex() <= 2) {
                 clearLogin();
             } else {
                 int ret = DialogManager
@@ -411,12 +411,10 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
     private void observe() {
         viewModel.onAccountSelected(account -> {
             int selectionIndex = viewModel.getSelectedIndex();
+            clearLogin();
 
             // Mojang account
             if (selectionIndex == 0) {
-                usernameField.setText("");
-                passwordField.setText("");
-                rememberField.setSelected(false);
                 leftButton.setText(GetText.tr("Add"));
                 rightButton.setText(GetText.tr("Clear"));
                 userSkin.setIcon(SkinUtils.getDefaultSkin());
@@ -435,9 +433,6 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             
             // Offline account
             } else if (selectionIndex == 1) {
-                usernameField.setText("");
-                passwordField.setText("");
-                rememberField.setSelected(false);
                 leftButton.setText(GetText.tr("Add"));
                 rightButton.setText(GetText.tr("Clear"));
                 userSkin.setIcon(SkinUtils.getDefaultSkin());
@@ -453,6 +448,25 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 loginWithMicrosoftButton.setVisible(true);
                 loginWithElyByButton.setVisible(true);
                 refreshAccessTokenMenuItem.setVisible(false);
+                
+            // ely.by account
+            } else if (selectionIndex == 2) {
+                leftButton.setText(GetText.tr("Add"));
+                rightButton.setText(GetText.tr("Clear"));
+                userSkin.setIcon(SkinUtils.getDefaultSkin());
+
+                usernameLabel.setVisible(true);
+                usernameField.setVisible(true);
+                passwordLabel.setVisible(true);
+                passwordField.setVisible(true);
+                rememberLabel.setVisible(true);
+                rememberField.setVisible(true);
+                leftButton.setVisible(true);
+                rightButton.setVisible(true);
+                loginWithMicrosoftButton.setVisible(true);
+                loginWithElyByButton.setVisible(true);
+                refreshAccessTokenMenuItem.setVisible(false);
+            
             } else {
                 usernameLabel.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount);
                 usernameField.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount);
@@ -482,13 +496,6 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 } else if (account instanceof OfflineAccount) {
                     OfflineAccount offlineAccount = (OfflineAccount) account;
                     usernameField.setText(offlineAccount.username);
-
-                    passwordField.setText("");
-                    rememberField.setSelected(false);
-                } else {
-                    usernameField.setText("");
-                    passwordField.setText("");
-                    rememberField.setSelected(false);
                 }
 
                 leftButton.setText(GetText.tr("Save"));
@@ -500,6 +507,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             accountsComboBox.removeAllItems();
             accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Mojang Account")));
             accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An Offline Account")));
+            accountsComboBox.addItem(new ComboItem<>(null, GetText.tr("Add An ely.by Account")));
             for (String account : accounts) {
                 accountsComboBox.addItem(new ComboItem<>(null, account));
             }
@@ -535,8 +543,9 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
             return;
         }
 
-        // if mojang account
-        if (viewModel.getSelectedAccountType() instanceof Accounts.Mojang && !Utils.isEntryValid(new String(passwordField.getPassword())) ) {
+        // if mojang or ely.by account check if password is valid
+        Accounts accountType = viewModel.getSelectedAccountType();
+        if ((accountType instanceof Accounts.Mojang || accountType instanceof Accounts.ElyBy) && !Utils.isEntryValid(new String(passwordField.getPassword())) ) {
             DialogManager
                     .okDialog()
                     .setTitle(GetText.tr("Account Not Added"))
@@ -559,16 +568,18 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         }
 
         LogManager.info("Logging into Minecraft!");
-        final ProgressDialog<LoginResponse> dialog = new ProgressDialog<>(
+        final ProgressDialog<MojangLoginResponse> dialog = new ProgressDialog<>(
                 GetText.tr("Logging Into Minecraft"),
                 0,
                 GetText.tr("Logging Into Minecraft"),
                 "Aborting login for " + viewModel.getLoginUsername());
         dialog.addThread(new Thread(() -> {
-            if (viewModel.getSelectedAccountType() instanceof Accounts.Mojang) {
+            if (accountType instanceof Accounts.Mojang) {
                 viewModel.mojangLogin();
-            } else if (viewModel.getSelectedAccountType() instanceof Accounts.Offline) {
+            } else if (accountType instanceof Accounts.Offline) {
                 viewModel.offlineLogin();    
+            } else if (accountType instanceof Accounts.ElyBy) {
+                viewModel.elybyLogin();
             }
 
             dialog.close();
@@ -622,7 +633,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
     @Override
     public void onRelocalization() {
-        if (accountsComboBox.getSelectedIndex() == 0) {
+        if (accountsComboBox.getSelectedIndex() <= 2) {
             leftButton.setText(GetText.tr("Add"));
             rightButton.setText(GetText.tr("Clear"));
         } else {
@@ -634,5 +645,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         passwordLabel.setText(GetText.tr("Password") + ":");
         rememberLabel.setText(GetText.tr("Remember Password") + ":");
         updateSkin.setText(GetText.tr("Reload Skin"));
+
+        clearLogin();
     }
 }

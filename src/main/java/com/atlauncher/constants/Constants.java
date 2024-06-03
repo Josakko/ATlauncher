@@ -172,6 +172,11 @@ public class Constants {
     public static final String ELYBY_SKIN_TEXTURE_URL = "http://skinsystem.ely.by/skins/";
     public static final String ELYBY_TEXTURES_URL = "http://skinsystem.ely.by/textures/";
 
+    public static final String ELYBY_BASE_AUTH_URL = "https://authserver.ely.by";
+    public static final String ELYBY_AUTH_URL = ELYBY_BASE_AUTH_URL + "/auth/authenticate";
+    public static final String ELYBY_REFRESH_URL = ELYBY_BASE_AUTH_URL + "/auth/refresh";
+    public static final String ELYBY_VALIDATE_URL = ELYBY_BASE_AUTH_URL + "/auth/validate";
+
     // Custom for ATLauncher Microsoft login constants
     // if you fork or modify this launcher, you must not use this Client ID
     public static final String MICROSOFT_LOGIN_CLIENT_ID = "90890812-00d1-48a8-8d3f-38465ef43b58";

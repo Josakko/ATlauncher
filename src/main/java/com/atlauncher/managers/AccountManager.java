@@ -151,6 +151,20 @@ public class AccountManager {
                         mojangAccount.password = "";
                         mojangAccount.remember = false;
                     }
+                }   
+            } else if (account instanceof ElybyAccount) {
+                ElybyAccount elybyAccount = (ElybyAccount) account;
+
+                if (elybyAccount.encryptedPassword == null) {
+                    elybyAccount.password = "";
+                    elybyAccount.remember = false;
+                } else {
+                    elybyAccount.password = Utils.decrypt(elybyAccount.encryptedPassword);
+                    if (elybyAccount.password == null) {
+                        LogManager.error("Error reading saved password!");
+                        elybyAccount.password = "";
+                        elybyAccount.remember = false;
+                    }
                 }
             }
         }
