@@ -39,10 +39,10 @@ public class ElyByAuth {
     public static ElybyLoginResponse login(ElybyAccount account, boolean usePassword) {
         ElybyLoginResponse response = null;
 
-        if (Utils.isEntryValid(account.accessToken)) {
-            response = accessTokenLogin(account.accessToken, account.clientToken, account.username);
-        } else if (usePassword) {
+        if (usePassword) {
             response = checkAccount(account.username, account.password, account.clientToken);
+        } else if (Utils.isEntryValid(account.accessToken)) {
+            response = accessTokenLogin(account.accessToken, account.clientToken, account.username); 
         } else {
             response = new ElybyLoginResponse(account.username);
             response.setErrorMessage("Invalid access token, use password for login!");

@@ -87,8 +87,7 @@ public class MojangAccount extends AbstractAccount {
             String clientToken, Map<String, Object> store) {
         this.username = username;
         if (remember) {
-            this.password = password;
-            this.encryptedPassword = Utils.encrypt(password);
+            setPassword(password);
         }
         this.minecraftUsername = minecraftUsername;
         this.uuid = uuid;
@@ -249,7 +248,7 @@ public class MojangAccount extends AbstractAccount {
                         return null;
                     }
 
-                    this.setPassword(passwordEntry);
+                    this.password = passwordEntry;
                 } else {
                     LogManager.error("Aborting login for " + this.minecraftUsername);
                     App.launcher.setMinecraftLaunched(false);
@@ -257,8 +256,8 @@ public class MojangAccount extends AbstractAccount {
                 }
             }
 
+            response = Authentication.login(this, true);
         }
-        response = Authentication.login(this, true);
 
         if (response.hasError() && !response.isOffline()) {
             LogManager.error(response.getErrorMessage());

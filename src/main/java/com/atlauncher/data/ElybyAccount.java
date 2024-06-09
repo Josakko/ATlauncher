@@ -69,8 +69,7 @@ public class ElybyAccount extends AbstractAccount {
     public void update(ElybyLoginResponse authResponse, String username, String password, boolean remember) {
         this.remember = remember;
         if (remember) {
-            this.password = password;
-            this.encryptedPassword = Utils.encrypt(password);
+            setPassword(password);
         }
 
         this.accessToken = authResponse.getAccessToken();
@@ -203,7 +202,16 @@ public class ElybyAccount extends AbstractAccount {
     }
 
     public boolean ensureAccessTokenValid() {
-        return ensureAccountIsLoggedIn();
+        ElybyLoginResponse response = this.login();
+        if (response != null && !response.hasError() && !this.mustLogin) {
+            return true;
+        }
+
+        if (this.mustLogin && ensureAccountIsLoggedIn()) {
+            return true;
+        }
+        
+        return false;
     }
 
     @Override
@@ -217,6 +225,11 @@ public class ElybyAccount extends AbstractAccount {
         if (StringUtils.isNotBlank(accessToken)) {
             LogManager.info("Trying to login with access token.");
             response = ElyByAuth.login(this, false);
+        }
+
+        if (response != null && (!response.hasError() || response.isOffline())) {
+            this.mustLogin = false;
+            return response;
         }
 
         if (response == null || (response.hasError() && !response.isOffline())) {
@@ -239,18 +252,20 @@ public class ElybyAccount extends AbstractAccount {
                     if (!Utils.isEntryValid(passwordEntry)) {
                         LogManager.error("Aborting login for " + this.minecraftUsername + ", no password entered");
                         App.launcher.setMinecraftLaunched(false);
+                        this.mustLogin = true;
                         return null;
                     }
 
-                    this.setPassword(passwordEntry);
+                    this.password = passwordEntry;
                 } else {
                     LogManager.error("Aborting login for " + this.minecraftUsername);
                     App.launcher.setMinecraftLaunched(false);
+                    this.mustLogin = true;
                     return null;
                 }
             }
-
         }
+        LogManager.info("Trying to login with password");
         response = ElyByAuth.login(this, true);
 
         if (response.hasError() && !response.isOffline()) {
@@ -264,20 +279,22 @@ public class ElybyAccount extends AbstractAccount {
                     .setType(DialogManager.ERROR).show();
 
             App.launcher.setMinecraftLaunched(false);
+            this.mustLogin = true;
             return null;
         }
 
         if (!response.isOffline() && !response.canPlayOnline()) {
+            this.mustLogin = true;
             return null;
         }
 
         if (!response.isOffline() && !response.hasError()) {
-            // this.uuid = Utils.getOfflineUUID(response.username);
             this.uuid = response.getSelectedProfile().getId().toString();
             this.accessToken = response.getAccessToken();
             AccountManager.saveAccounts();
         }
 
+        this.mustLogin = false;
         return response;
     }
 }

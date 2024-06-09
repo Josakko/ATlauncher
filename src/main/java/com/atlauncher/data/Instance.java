@@ -853,7 +853,9 @@ public class Instance extends MinecraftVersion {
             return false;
         }
 
+        // not needed since that is checked on ensureAccessTokenValid method call
         // if Microsoft or Ely.by account must login again, then make sure to do that
+        /* 
         if (!offline && account instanceof MicrosoftAccount && ((MicrosoftAccount) account).mustLogin) {
             if (!((MicrosoftAccount) account).ensureAccountIsLoggedIn()) {
                 LogManager.info("You must login to your account before continuing.");
@@ -865,6 +867,7 @@ public class Instance extends MinecraftVersion {
                 return false;
             }
         }
+        */
 
         String playerName = account.minecraftUsername;
 

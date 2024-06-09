@@ -224,13 +224,13 @@ public class AccountsViewModel implements IAccountsViewModel {
         account.username = loginUsername;
         account.minecraftUsername = response.getAuth().getSelectedProfile().getName();
         account.uuid = response.getAuth().getSelectedProfile().getId().toString();
+        account.remember = loginRemember;
         if (loginRemember) {
             account.setPassword(loginPassword);
         } else {
             account.encryptedPassword = null;
             account.password = null;
         }
-        account.remember = loginRemember;
         account.clientToken = getClientToken();
         account.store = response.getAuth().saveForStorage();
 
@@ -247,13 +247,13 @@ public class AccountsViewModel implements IAccountsViewModel {
         account.username = loginUsername;
         account.minecraftUsername = response.getSelectedProfile().getName();
         account.uuid = response.getSelectedProfile().getId().toString();
+        account.remember = loginRemember;
         if (loginRemember) {
             account.setPassword(loginPassword);
         } else {
             account.encryptedPassword = null;
             account.password = null;
         }
-        account.remember = loginRemember;
         account.clientToken = getClientToken();
         account.accessToken = response.getAccessToken();
         account.mustLogin = false;
@@ -311,7 +311,7 @@ public class AccountsViewModel implements IAccountsViewModel {
                 invalidateClientToken();
                 return new LoginPostResult.Added();
             }
-            // TODO make ely.by account editable via password and username
+
             LoginPostResult res = editAccount(elybyResponse);
             invalidateClientToken();
             return res;
@@ -353,10 +353,6 @@ public class AccountsViewModel implements IAccountsViewModel {
 
     @Override
     public void elybyLogin() {
-        LogManager.info(loginPassword);
-        LogManager.info(loginUsername);
-        LogManager.info(getClientToken());
-
         loginResponse = ElyByAuth.checkAccount(loginUsername, loginPassword, getClientToken());
     }
 
