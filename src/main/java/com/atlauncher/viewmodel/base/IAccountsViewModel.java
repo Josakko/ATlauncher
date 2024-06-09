@@ -78,6 +78,13 @@ public interface IAccountsViewModel {
     int getSelectedIndex();
 
     /**
+     * Checks if on the accountComboBox is selected one of the options for adding accounts
+     * 
+     * @return if account on accountComboBox account is being added or is being edited
+     */
+    public boolean isAccountBeingAdded();
+
+    /**
      * Update the username of a legacy account
      */
     void updateUsername();
@@ -198,6 +205,12 @@ public interface IAccountsViewModel {
          * The account already exists
          */
         public static class Exists extends LoginPreCheckResult {
+        }
+
+        /*
+         * The account already exists but it is being edited
+         */
+        public static class Edited extends LoginPreCheckResult {
         }
     }
 

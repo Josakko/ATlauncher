@@ -345,7 +345,7 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
         userSkin.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON3) {
-                    if (accountsComboBox.getSelectedIndex() != 0) {
+                    if (accountsComboBox.getSelectedIndex() > 2 && !(viewModel.getSelectedAccountType() instanceof Accounts.Offline)) {
                         contextMenu.show(userSkin, e.getX(), e.getY());
                     }
                 }
@@ -468,14 +468,14 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
                 refreshAccessTokenMenuItem.setVisible(false);
             
             } else {
-                usernameLabel.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount);
-                usernameField.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount);
-                passwordLabel.setVisible(account instanceof MojangAccount);
-                passwordField.setVisible(account instanceof MojangAccount);
-                rememberLabel.setVisible(account instanceof MojangAccount);
-                rememberField.setVisible(account instanceof MojangAccount);
+                usernameLabel.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount || account instanceof ElybyAccount);
+                usernameField.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount || account instanceof ElybyAccount);
+                passwordLabel.setVisible(account instanceof MojangAccount || account instanceof ElybyAccount);
+                passwordField.setVisible(account instanceof MojangAccount || account instanceof ElybyAccount);
+                rememberLabel.setVisible(account instanceof MojangAccount || account instanceof ElybyAccount);
+                rememberField.setVisible(account instanceof MojangAccount || account instanceof ElybyAccount);
 
-                leftButton.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount);
+                leftButton.setVisible(account instanceof MojangAccount || account instanceof OfflineAccount || account instanceof ElybyAccount);
                 rightButton.setVisible(true);
                 
                 loginWithMicrosoftButton.setVisible(account instanceof MicrosoftAccount);
@@ -483,24 +483,38 @@ public class AccountsTab extends JPanel implements Tab, RelocalizationListener {
 
                 loginWithElyByButton.setVisible(account instanceof ElybyAccount);
 
-                changeSkin.setEnabled(!((account instanceof ElybyAccount) || (account instanceof OfflineAccount)));
-                updateSkin.setEnabled(!(account instanceof OfflineAccount));
-                updateUsername.setEnabled(!(account instanceof OfflineAccount));
+                changeSkin.setVisible(!(account instanceof ElybyAccount));
+                // changeSkin.setVisible(!((account instanceof ElybyAccount) || (account instanceof OfflineAccount)));
+                // updateSkin.setVisible(!(account instanceof OfflineAccount));
+                // updateUsername.setVisible(!(account instanceof OfflineAccount));
 
                 if (account instanceof MojangAccount) {
                     MojangAccount mojangAccount = (MojangAccount) account;
                     usernameField.setText(mojangAccount.username);
+                    viewModel.setLoginUsername(mojangAccount.username);
                     passwordField.setText(mojangAccount.password);
+                    viewModel.setLoginPassword(mojangAccount.password);
                     rememberField.setSelected(mojangAccount.remember);
+                    viewModel.setRememberLogin(mojangAccount.remember);
 
                 } else if (account instanceof OfflineAccount) {
                     OfflineAccount offlineAccount = (OfflineAccount) account;
                     usernameField.setText(offlineAccount.username);
+                    viewModel.setLoginUsername(offlineAccount.username);
+
+                } else if (account instanceof ElybyAccount) {
+                    ElybyAccount elybyAccount = (ElybyAccount) account;
+                    usernameField.setText(elybyAccount.username);
+                    viewModel.setLoginUsername(elybyAccount.username);
+                    passwordField.setText(elybyAccount.password);
+                    viewModel.setLoginPassword(elybyAccount.password);
+                    rememberField.setSelected(elybyAccount.remember);
+                    viewModel.setRememberLogin(elybyAccount.remember);
                 }
 
                 leftButton.setText(GetText.tr("Save"));
                 rightButton.setText(GetText.tr("Delete"));
-                // userSkin.setIcon(account.getMinecraftSkin());
+                userSkin.setIcon(account.getMinecraftSkin());
             }
         });
         viewModel.onAccountsNamesChanged(accounts -> {

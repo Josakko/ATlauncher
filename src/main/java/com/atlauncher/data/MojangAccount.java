@@ -142,6 +142,10 @@ public class MojangAccount extends AbstractAccount {
 
     @Override
     public void updateSkinPreCheck() {
+        String newUsername = getCurrentUsername();
+        if (newUsername != this.username) {
+            this.username = newUsername;
+        }
     }
 
     @Override

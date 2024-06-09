@@ -130,6 +130,10 @@ public class MicrosoftAccount extends AbstractAccount {
     @Override
     public void changeSkinPreCheck() {
         this.refreshAccessToken();
+        String newUsername = getCurrentUsername();
+        if (newUsername != this.username) {
+            this.username = newUsername;
+        }
     }
 
     @Override

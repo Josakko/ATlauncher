@@ -48,7 +48,7 @@ public class ElybyAccount extends AbstractAccount {
     /*
      * In case user authenticated with password and username 
      */
-    public final String clientToken;
+    public String clientToken;
 
     /**
      * If the user must login again. This is usually the result of a failed
@@ -148,6 +148,10 @@ public class ElybyAccount extends AbstractAccount {
 
     @Override
     public void updateSkinPreCheck() {
+        String newUsername = getCurrentUsername();
+        if (newUsername != this.username) {
+            this.username = newUsername;
+        }
     }
 
     @Override
@@ -267,8 +271,10 @@ public class ElybyAccount extends AbstractAccount {
             return null;
         }
 
-        if (!response.isOffline()) {
-            this.uuid = Utils.getOfflineUUID(response.username);
+        if (!response.isOffline() && !response.hasError()) {
+            // this.uuid = Utils.getOfflineUUID(response.username);
+            this.uuid = response.getSelectedProfile().getId().toString();
+            this.accessToken = response.getAccessToken();
             AccountManager.saveAccounts();
         }
 

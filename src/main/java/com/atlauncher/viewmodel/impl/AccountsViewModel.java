@@ -38,6 +38,7 @@ import com.atlauncher.managers.AccountManager;
 import com.atlauncher.managers.LogManager;
 import com.atlauncher.utils.Authentication;
 import com.atlauncher.utils.ElyByAuth;
+import com.atlauncher.utils.Utils;
 import com.atlauncher.viewmodel.base.IAccountsViewModel;
 
 /**
@@ -179,7 +180,9 @@ public class AccountsViewModel implements IAccountsViewModel {
 
     @Override
     public LoginPreCheckResult loginPreCheck() {
-        if (AccountManager.isAccountByName(loginUsername)) {
+        if (!isAccountBeingAdded()) {
+            return new LoginPreCheckResult.Edited();
+        } else if (AccountManager.isAccountByName(loginUsername)) {
             return new LoginPreCheckResult.Exists();
         }
         return null;
@@ -215,31 +218,47 @@ public class AccountsViewModel implements IAccountsViewModel {
         pushNewAccounts();
     }
 
-    private LoginPostResult editAccount(LoginResponse response) {
-        AbstractAccount account = getSelectedAccount();
+    private LoginPostResult editAccount(MojangLoginResponse response) {
+        MojangAccount account = (MojangAccount) getSelectedAccount();
 
-        if (account instanceof MojangAccount && response instanceof LoginResponse) {
-            MojangAccount mojangAccount = (MojangAccount) account;
-            MojangLoginResponse mojangResponse = (MojangLoginResponse) response;
-
-            mojangAccount.username = loginUsername;
-            mojangAccount.minecraftUsername = mojangResponse.getAuth().getSelectedProfile().getName();
-            mojangAccount.uuid = mojangResponse.getAuth().getSelectedProfile().getId().toString();
-            if (loginRemember) {
-                mojangAccount.setPassword(loginPassword);
-            } else {
-                mojangAccount.encryptedPassword = null;
-                mojangAccount.password = null;
-            }
-            mojangAccount.remember = loginRemember;
-            mojangAccount.clientToken = getClientToken();
-            mojangAccount.store = mojangResponse.getAuth().saveForStorage();
-
-            AccountManager.saveAccounts();
+        account.username = loginUsername;
+        account.minecraftUsername = response.getAuth().getSelectedProfile().getName();
+        account.uuid = response.getAuth().getSelectedProfile().getId().toString();
+        if (loginRemember) {
+            account.setPassword(loginPassword);
         } else {
-            LogManager.warn("Did not edit any account");
-            return new LoginPostResult.Error("Invalid credentials.");
+            account.encryptedPassword = null;
+            account.password = null;
         }
+        account.remember = loginRemember;
+        account.clientToken = getClientToken();
+        account.store = response.getAuth().saveForStorage();
+
+        AccountManager.saveAccounts();
+
+        LogManager.info("Edited Account " + account);
+        pushNewAccounts();
+        return new LoginPostResult.Edited();
+    }
+
+    private LoginPostResult editAccount(ElybyLoginResponse response) {
+        ElybyAccount account = (ElybyAccount) getSelectedAccount();
+
+        account.username = loginUsername;
+        account.minecraftUsername = response.getSelectedProfile().getName();
+        account.uuid = response.getSelectedProfile().getId().toString();
+        if (loginRemember) {
+            account.setPassword(loginPassword);
+        } else {
+            account.encryptedPassword = null;
+            account.password = null;
+        }
+        account.remember = loginRemember;
+        account.clientToken = getClientToken();
+        account.accessToken = response.getAccessToken();
+        account.mustLogin = false;
+
+        AccountManager.saveAccounts();
 
         LogManager.info("Edited Account " + account);
         pushNewAccounts();
@@ -247,19 +266,13 @@ public class AccountsViewModel implements IAccountsViewModel {
     }
 
     private LoginPostResult editAccount() {
-        AbstractAccount account = getSelectedAccount();
+        OfflineAccount account = (OfflineAccount) getSelectedAccount();
 
-         if (account instanceof OfflineAccount) {
-            OfflineAccount offlineAccount = (OfflineAccount) account;
+        account.username = loginUsername;
+        account.minecraftUsername = loginUsername;
+        account.uuid = Utils.getOfflineUUID(loginUsername);
 
-            offlineAccount.username = loginUsername;
-            offlineAccount.minecraftUsername = loginUsername;
-
-            AccountManager.saveAccounts();
-        } else {
-            LogManager.warn("Did not edit any account");
-            return new LoginPostResult.Error("Invalid credentials.");
-        }
+        AccountManager.saveAccounts();
 
         LogManager.info("Edited Account " + account);
         pushNewAccounts();
@@ -277,34 +290,34 @@ public class AccountsViewModel implements IAccountsViewModel {
 
         if (loginResponse instanceof MojangLoginResponse) {
             MojangLoginResponse mojangResponse = (MojangLoginResponse) loginResponse;
-            if (mojangResponse.hasAuth() && mojangResponse.isValidAuth()) {
-                if (getSelectedIndex() <= 2) {
-                    // mojang account is being added
-                    addNewMojangAccount(mojangResponse);
-                    invalidateClientToken();
-                    return new LoginPostResult.Added();
-                }
-                
-                LoginPostResult res = editAccount(loginResponse);
-                invalidateClientToken();
-                return res;
-            } 
-        
-        } else if (loginResponse instanceof ElybyLoginResponse) {
-            if (getSelectedIndex() <= 2) {
-                // ely.by account is being added
-                addNewElybyAccount((ElybyLoginResponse) loginResponse);
+            if (!mojangResponse.hasAuth() || !mojangResponse.isValidAuth()) {
+                return new LoginPostResult.Error("Authentication not valid, check credentials and try again!");
+            }
+
+            if (isAccountBeingAdded()) {
+                addNewMojangAccount(mojangResponse);
                 invalidateClientToken();
                 return new LoginPostResult.Added();
             }
+                
+            LoginPostResult res = editAccount(mojangResponse);
+            invalidateClientToken();
+            return res;
             
-            LoginPostResult res = editAccount(loginResponse);
+        } else if (loginResponse instanceof ElybyLoginResponse) {
+            ElybyLoginResponse elybyResponse = (ElybyLoginResponse) loginResponse;
+            if (isAccountBeingAdded()) {
+                addNewElybyAccount(elybyResponse);
+                invalidateClientToken();
+                return new LoginPostResult.Added();
+            }
+            // TODO make ely.by account editable via password and username
+            LoginPostResult res = editAccount(elybyResponse);
             invalidateClientToken();
             return res;
 
         } else if (loginResponse == null) {
-            if (getSelectedIndex() <= 2) {
-                // offline account is being added
+            if (isAccountBeingAdded()) {
                 addNewOfflineAccount();
                 invalidateClientToken();
                 return new LoginPostResult.Added();
@@ -324,6 +337,11 @@ public class AccountsViewModel implements IAccountsViewModel {
     }
 
     @Override
+    public boolean isAccountBeingAdded() {
+        return getSelectedIndex() <= 2;
+    }
+
+    @Override
     public void mojangLogin() {
         loginResponse = Authentication.checkAccount(loginUsername, loginPassword, getClientToken());
     }
@@ -335,6 +353,10 @@ public class AccountsViewModel implements IAccountsViewModel {
 
     @Override
     public void elybyLogin() {
+        LogManager.info(loginPassword);
+        LogManager.info(loginUsername);
+        LogManager.info(getClientToken());
+
         loginResponse = ElyByAuth.checkAccount(loginUsername, loginPassword, getClientToken());
     }
 
@@ -375,7 +397,6 @@ public class AccountsViewModel implements IAccountsViewModel {
     @Override
     public void updateSkin() {
         AbstractAccount account = getSelectedAccount();
-        account.updateUsername();
         account.updateSkin();
         AccountManager.saveAccounts();
         pushNewAccounts();
