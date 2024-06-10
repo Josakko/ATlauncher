@@ -1,6 +1,15 @@
 #!/bin/bash
 
-cd ..
+if [[ -d ./src/ ]]; then
+    :
+
+elif [[ -d ./linux/ && -d ./aur/ ]]; then
+    cd ..
+
+else
+    echo "[!] Working directory must be in the root direcotry or in then packaging directory!"
+    exit
+fi
 
 VERPATH="./src/main/resources/version"
 version="$1"
