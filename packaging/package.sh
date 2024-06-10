@@ -13,6 +13,20 @@ fi
 
 VERPATH="./src/main/resources/version"
 version="$1"
+
+if [[ "$version" == "clean" ]]; then
+    echo "[!] Cleaning the "
+
+    echo "[+] Removing output folders"
+    sudo rm -rf ./packaging/linux/out
+
+    rm -rf ./packaging/bin
+    rm -rf ./packaging/windows-setup/Output
+
+    echo "[+] Finished cleaning packaging direcotry"
+    exit
+fi
+
 if [[ "$version" != "" ]]; then
     echo "$version" > "$VERPATH"
     echo "Setting version: $version"
