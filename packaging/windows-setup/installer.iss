@@ -1,6 +1,6 @@
 #define MyAppName "ATLauncher"
 #define MyAppURL "https://github.com/Josakko/ATlauncher"
-#define MyAppVersion "1.1.3.1"
+#define MyAppVersion "1.1.2.1"
 
 [Setup]
 AppId={{2F5FDA11-45A5-4CC3-8E51-5E11E2481697}
@@ -88,7 +88,7 @@ begin
   end else if CurPageID = wpReady then begin
     DownloadPage.Clear;
 
-    DownloadPage.Add('https://github.com/Josakko/ATlauncher/releases/download/v1/ATLauncher-3.4.36.2.exe', '{#MyAppName}.exe', '');
+    DownloadPage.Add('https://github.com/Josakko/ATlauncher/releases/download/v{#MyAppVersion}/ATLauncher-{#MyAppVersion}.exe', '{#MyAppName}.exe', '');
 
     if WizardIsComponentSelected('java') then begin
       if IsWin64 then begin
