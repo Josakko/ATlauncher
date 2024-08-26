@@ -965,7 +965,6 @@ public class App {
         parser.accepts("allow-all-ssl-certs",
                 "This will tell the launcher to allow all SSL certs regardless of validity. This is insecure and only intended for development purposes.")
                 .withOptionalArg().ofType(Boolean.class);
-        // disabled 
         parser.accepts("no-launcher-update",
                 "This forces the launcher to not check for a launcher update. It can be enabled with the below command line argument.")
                 .withOptionalArg().ofType(Boolean.class);

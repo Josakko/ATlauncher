@@ -202,6 +202,10 @@ public class ElybyAccount extends AbstractAccount {
     }
 
     public boolean ensureAccessTokenValid() {
+        if (StringUtils.isBlank(this.clientToken)) {
+            return oauthLogin();
+        }
+        
         ElybyLoginResponse response = this.login();
         if (response != null && !response.hasError() && !this.mustLogin) {
             return true;
@@ -219,7 +223,7 @@ public class ElybyAccount extends AbstractAccount {
         return Constants.ELYBY_SKIN_TEXTURE_URL + this.minecraftUsername + ".png";
     }
 
-    public ElybyLoginResponse login() {
+    private ElybyLoginResponse login() {
         ElybyLoginResponse response = null;
 
         if (StringUtils.isNotBlank(accessToken)) {
@@ -296,5 +300,23 @@ public class ElybyAccount extends AbstractAccount {
 
         this.mustLogin = false;
         return response;
+    }
+
+    private boolean oauthLogin() {
+        boolean ret = false;
+
+        if (StringUtils.isNotBlank(accessToken)) {
+            LogManager.info("Checking the access token.");
+            ret = ElyByAuthAPI.validateAccessToken(accessToken);
+        }
+
+        if (!ret) {
+            LogManager.warn("Access token not valid, must relogin!");
+            this.mustLogin = false;
+        } else {
+            LogManager.info("Access token valid.");
+        }
+
+        return ret;
     }
 }
