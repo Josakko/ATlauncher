@@ -113,6 +113,24 @@ public class Settings {
     public int concurrentConnections = 8;
     public int connectionTimeout = 60;
     public String modrinthApiKey = null;
+    public String curseForgeApiKey = ""; //  when implementing this populate
+    public String microsoftClientId = ""; // it with current values from constants
+    public String customAuthServerClientId = ""; // ely.by and so on
+    /*
+     * "ATLauncher/3.4.40.2.Beta (+https://atlauncher.com/)"
+     * 
+     * ALTERNATIVE (for atl api): => "ATLauncher/3.4.40.2.Beta [%s/%s] (+https://atlauncher.com/)"
+     * String.format(
+            "%s/%s [%s/%s] (+%s)", Constants.LAUNCHER_NAME, Constants.VERSION.toStringForLogging(),
+            Constants.VERSION.getSha1Revision(),
+            OS.getInstallMethod().toString(),
+            Constants.LAUNCHER_WEBSITE);
+     */
+    public String useragent = "ATLauncher/3.4.40.2.Beta (+https://atlauncher.com/)"; /* String.format(
+            "%s/%s (+%s)", 
+            Constants.LAUNCHER_NAME, 
+            Constants.VERSION.toStringForUserAgent(),
+            Constants.LAUNCHER_WEBSITE); */ // add some custom variable like {LAUNCHER_VER}
     public boolean enableProxy = false;
     public String proxyHost = "";
     public int proxyPort = 8080;
@@ -478,7 +496,7 @@ public class Settings {
                     type = Type.DIRECT;
                     break;
             }
-
+            
             proxy = new Proxy(type, new InetSocketAddress(proxyHost, proxyPort));
         } else {
             proxy = Proxy.NO_PROXY;

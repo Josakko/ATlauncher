@@ -19,24 +19,20 @@ package com.atlauncher.network;
 
 import java.io.IOException;
 
-import com.atlauncher.Network;
-import com.atlauncher.constants.Constants;
+import com.atlauncher.App;
 
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public final class UserAgentInterceptor implements Interceptor {
+
     @Override
     public Response intercept(Chain chain) throws IOException {
         Request originalRequest = chain.request();
 
-        boolean internalHost = originalRequest.url().host().equals(Constants.API_HOST)
-                || originalRequest.url().host().equals(Constants.DOWNLOAD_HOST);
-        String userAgent = internalHost ? Network.API_USER_AGENT
-                : Network.USER_AGENT;
         Request requestWithUserAgent = originalRequest.newBuilder().removeHeader("User-Agent")
-                .addHeader("User-Agent", userAgent).build();
+                .addHeader("User-Agent", App.settings.useragent).build();
 
         return chain.proceed(requestWithUserAgent);
     }

@@ -37,7 +37,6 @@ import com.atlauncher.interfaces.NetworkProgressable;
 import com.atlauncher.listener.ProgressListener;
 import com.atlauncher.network.DebugLoggingInterceptor;
 import com.atlauncher.network.UserAgentInterceptor;
-import com.atlauncher.utils.OS;
 import com.atlauncher.utils.ProgressResponseBody;
 
 import okhttp3.Cache;
@@ -60,17 +59,6 @@ public final class Network {
             .build();
 
     public static OkHttpClient CACHED_CLIENT = CLIENT.newBuilder().cache(CACHE).build();
-
-    // TODO: do this properly
-    public static final String USER_AGENT = "ATLauncher/3.4.40.2.Beta (+https://atlauncher.com/)"; /* String.format(
-            "%s/%s (+%s)", Constants.LAUNCHER_NAME, Constants.VERSION.toStringForUserAgent(),
-            Constants.LAUNCHER_WEBSITE); */
-
-    public static final String API_USER_AGENT = USER_AGENT; /* String.format(
-            "%s/%s [%s/%s] (+%s)", Constants.LAUNCHER_NAME, Constants.VERSION.toStringForLogging(),
-            Constants.VERSION.getSha1Revision(),
-            OS.getInstallMethod().toString(),
-            Constants.LAUNCHER_WEBSITE); */
 
     static {
         Logger.getLogger(OkHttpClient.class.getName()).setLevel(Level.FINE);

@@ -51,6 +51,18 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
     private final JLabelWithHover modrinthApiKeyLabel;
     private JTextField modrinthApiKey;
 
+    private final JLabelWithHover curseForgeApiKeyLabel;
+    private JTextField curseForgeApiKey;
+
+    private final JLabelWithHover microsoftClientIdLabel;
+    private JTextField microsoftClientId;
+
+    private final JLabelWithHover customAuthServerClientIdLabel;
+    private JTextField customAuthServerClientId;
+
+    private final JLabelWithHover useragentLabel;
+    private JTextField useragent;
+
     private final JLabelWithHover enableProxyLabel;
     private final JCheckBox enableProxy;
 
@@ -125,6 +137,94 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
             modrinthApiKey.setText("");
         });
         add(modrinthApiKey, gbc);
+
+        // CurseForge Api Key Settings
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        curseForgeApiKeyLabel = new JLabelWithHover(GetText.tr("CurseForge Api Key") + ":", HELP_ICON,
+                "<html>" + GetText.tr(
+                        "Api key to use when making requests to CurseForge. Change if you want a custom one.")
+                        + "</html>");
+        add(curseForgeApiKeyLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        curseForgeApiKey = new JTextField(40);
+        curseForgeApiKey.setText(App.settings.curseForgeApiKey);
+        curseForgeApiKey.putClientProperty("JTextField.showClearButton", true);
+        curseForgeApiKey.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
+            curseForgeApiKey.setText("");
+        });
+        add(curseForgeApiKey, gbc);
+
+        // Microsoft Client ID Settings
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        microsoftClientIdLabel = new JLabelWithHover(GetText.tr("Microsoft Client ID") + ":", HELP_ICON,
+                "<html>" + GetText.tr(
+                        "Client ID used when doing Oauth for Microsoft accounts. Change if you want a custom one.")
+                        + "</html>");
+        add(microsoftClientIdLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        microsoftClientId = new JTextField(40);
+        microsoftClientId.setText(App.settings.microsoftClientId);
+        microsoftClientId.putClientProperty("JTextField.showClearButton", true);
+        microsoftClientId.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
+            microsoftClientId.setText("");
+        });
+        add(microsoftClientId, gbc);
+
+        // Custom Auth Servers Client ID Settings
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        customAuthServerClientIdLabel = new JLabelWithHover(GetText.tr("Custom Auth Servers Client ID") + ":", HELP_ICON,
+                "<html>" + GetText.tr(
+                        "Client ID used when authentificating on custom auth servers. Change if you want a custom one.")
+                        + "</html>");
+        add(customAuthServerClientIdLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        customAuthServerClientId = new JTextField(40);
+        customAuthServerClientId.setText(App.settings.customAuthServerClientId);
+        customAuthServerClientId.putClientProperty("JTextField.showClearButton", true);
+        customAuthServerClientId.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
+            customAuthServerClientId.setText("");
+        });
+        add(customAuthServerClientId, gbc);
+
+        // User Agent Settings
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.insets = UIConstants.LABEL_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_TRAILING;
+        useragentLabel = new JLabelWithHover(GetText.tr("User Agent") + ":", HELP_ICON,
+                "<html>" + GetText.tr(
+                        "User Agent used when making any requests from the launcher. Change if you want a custom one.")
+                        + "</html>");
+        add(useragentLabel, gbc);
+
+        gbc.gridx++;
+        gbc.insets = UIConstants.FIELD_INSETS;
+        gbc.anchor = GridBagConstraints.BASELINE_LEADING;
+        useragent = new JTextField(40);
+        useragent.setText(App.settings.useragent);
+        useragent.putClientProperty("JTextField.showClearButton", true);
+        useragent.putClientProperty("JTextField.clearCallback", (Runnable) () -> {
+            useragent.setText("");
+        });
+        add(useragent, gbc);
 
         // Enable Proxy
         gbc.gridx = 0;
@@ -268,6 +368,10 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         App.settings.concurrentConnections = (Integer) concurrentConnections.getValue();
         App.settings.connectionTimeout = (Integer) connectionTimeout.getValue();
         App.settings.modrinthApiKey = modrinthApiKey.getText();
+        App.settings.curseForgeApiKey = curseForgeApiKey.getText();
+        App.settings.microsoftClientId = microsoftClientId.getText();
+        App.settings.customAuthServerClientId = customAuthServerClientId.getText();
+        App.settings.useragent = useragent.getText();
         App.settings.enableProxy = enableProxy.isSelected();
         if (enableProxy.isSelected()) {
             App.settings.proxyHost = proxyHost.getText();
@@ -304,6 +408,30 @@ public class NetworkSettingsTab extends AbstractSettingsTab implements Relocaliz
         this.modrinthApiKeyLabel.setToolTipText(
                 "<html>" + GetText.tr(
                         "Api key to use when making requests to Modrinth. This is unecessary to set unless you want to access private data.")
+                        + "</html>");
+
+        this.curseForgeApiKeyLabel.setText(GetText.tr("CurseForge Api Key") + ":");
+        this.curseForgeApiKeyLabel.setToolTipText(
+                "<html>" + GetText.tr(
+                        "Api key to use when making requests to CurseForge. Change if you want a custom one.")
+                        + "</html>");
+
+        this.microsoftClientIdLabel.setText(GetText.tr("Microsoft Client ID") + ":");
+        this.microsoftClientIdLabel.setToolTipText(
+                "<html>" + GetText.tr(
+                        "Client ID used when doing Oauth for Microsoft accounts. Change if you want a custom one.")
+                        + "</html>");
+                    
+        this.customAuthServerClientIdLabel.setText(GetText.tr("Custom Auth Servers Client ID") + ":");
+        this.customAuthServerClientIdLabel.setToolTipText(
+                "<html>" + GetText.tr(
+                        "Client ID used when authentificating on custom auth servers. Change if you want a custom one.")
+                        + "</html>");
+
+        this.useragentLabel.setText(GetText.tr("User Agent") + ":");
+        this.useragentLabel.setToolTipText(
+                "<html>" + GetText.tr(
+                        "User Agent used when making any requests from the launcher. Change if you want a custom one.")
                         + "</html>");
 
         this.enableProxyLabel.setText(GetText.tr("Enable Proxy") + "?");

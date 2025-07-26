@@ -29,7 +29,6 @@ import java.net.URLEncoder;
 import java.util.concurrent.Callable;
 
 import com.atlauncher.App;
-import com.atlauncher.Network;
 import com.atlauncher.constants.Constants;
 import com.atlauncher.managers.LogManager;
 
@@ -59,7 +58,7 @@ public final class PasteUpload implements Callable<String> {
         }
         conn.setDoOutput(true);
         try {
-            conn.addRequestProperty("User-Agent", Network.USER_AGENT);
+            conn.addRequestProperty("User-Agent", App.settings.useragent);
             conn.connect();
             conn.getOutputStream().write(urlParameters.getBytes());
             conn.getOutputStream().flush();

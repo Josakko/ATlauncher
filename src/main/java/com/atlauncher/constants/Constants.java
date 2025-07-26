@@ -75,7 +75,7 @@ public class Constants {
     public static final String CURSEFORGE_CORE_API_URL = "https://api.curseforge.com/v1";
     // if you fork or modify this launcher, you must not use this API key and apply
     // for your own
-    public static final String CURSEFORGE_CORE_API_KEY = "$2a$10$.7CSxLm/lnj5lCBSM5jGQ.3SICSX4j9r661AgoB1Rc4Nw8jCMKcv2";
+    public static final String CURSEFORGE_CORE_API_KEY = "$2a$10$.7CSxLm/lnj5lCBSM5jGQ.3SICSX4j9r661AgoB1Rc4Nw8jCMKcv2"; // move to settings?
     public static final String CURSEFORGE_CORE_API_HOST = "api.curseforge.com";
     public static final int CURSEFORGE_FORGE_MODLOADER_ID = 1;
     public static final int CURSEFORGE_FABRIC_MODLOADER_ID = 4;
@@ -152,9 +152,10 @@ public class Constants {
             "2560x1440", "3440x1440", "3840x2160" };
     public static final String DEFAULT_JAVA_PARAMETERS = "-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M";
 
+    // oauth stuff for ely.by
     // yeah i know that SECRET key should not be made public but ely.by api or more specifically their oauth system is little stupid so you must use secret key to get access token from auth code unlike ms where on the other hand you must have azure account with active subscription to register an app... and thats me complaining in code comment about something that nobody cares about anyway, i might remove this comment... (PS i though that that secret key was unimportant to be kept secret anyway cause its only used for getting access token so writing and paying for some server that is going to be just used as proxy to the ely.by that adds client secret to the requests would get me to the same effect but sure if someone wants to donate for hosting server contact me... :)  ) - longest (useless) comment ever
-    public static final String ELYBY_LOGIN_SECRET_KEY = "s6Bf9uEfKOJ69sPgAhmu3yRCMFGUQmV3yE6NlkQ8Zph-eWnnTbu1D7Nzww0qH-yT";
-    public static final String ELYBY_LOGIN_CLIENT_ID = "jklauncher";
+    public static final String ELYBY_LOGIN_SECRET_KEY = "s6Bf9uEfKOJ69sPgAhmu3yRCMFGUQmV3yE6NlkQ8Zph-eWnnTbu1D7Nzww0qH-yT"; // move to settings?
+    public static final String ELYBY_LOGIN_CLIENT_ID = "jklauncher"; // move to settings?
     public static final int ELYBY_LOGIN_REDIRECT_PORT = 28563;
     public static final String ELYBY_LOGIN_REDIRECT_URL = "http://127.0.0.1:" + ELYBY_LOGIN_REDIRECT_PORT;
     public static final String ELYBY_LOGIN_REDIRECT_URL_ENCODED = "http%3A%2F%2F127.0.0.1%3A" + ELYBY_LOGIN_REDIRECT_PORT;
@@ -179,7 +180,7 @@ public class Constants {
 
     // Custom for ATLauncher Microsoft login constants
     // if you fork or modify this launcher, you must not use this Client ID
-    public static final String MICROSOFT_LOGIN_CLIENT_ID = "90890812-00d1-48a8-8d3f-38465ef43b58";
+    public static final String MICROSOFT_LOGIN_CLIENT_ID = "90890812-00d1-48a8-8d3f-38465ef43b58"; // move to settings?
     public static final int MICROSOFT_LOGIN_REDIRECT_PORT = 28562;
     public static final String MICROSOFT_LOGIN_REDIRECT_URL = "http://127.0.0.1:" + MICROSOFT_LOGIN_REDIRECT_PORT;
     public static final String MICROSOFT_LOGIN_REDIRECT_URL_ENCODED = "http%3A%2F%2F127.0.0.1%3A"
