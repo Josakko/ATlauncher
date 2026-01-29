@@ -1,6 +1,6 @@
 #define MyAppName "ATLauncher"
 #define MyAppURL "https://github.com/Josakko/ATlauncher"
-#define MyAppVersion "1.1.3.2"
+#define MyAppVersion "1.1.3.3"
 
 [Setup]
 AppId={{2F5FDA11-45A5-4CC3-8E51-5E11E2481697}
